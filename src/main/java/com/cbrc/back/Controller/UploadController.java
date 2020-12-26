@@ -4,21 +4,19 @@ package com.cbrc.back.Controller;
 
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 
 import com.cbrc.back.mapper.Table1Mapper;
+import com.cbrc.back.mapper.TableStructMapper;
 import com.cbrc.back.model.Table1;
-import com.cbrc.back.vo.UploadInfo;
+import com.cbrc.back.model.TableStruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import sun.tools.jconsole.Tab;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 
@@ -31,11 +29,18 @@ public class UploadController {
 
 
     @Autowired
+    TableStructMapper tableStructMapper;
+
+    @Autowired
     Table1Mapper table1Mapper;
 
-
     @PostMapping("/upload")
-    public Object upload(@RequestParam(name="uploadInfo",defaultValue="") String uploadInfoStr,
+    public Object upload(@RequestParam(name="dataSourceTmp",defaultValue="") String uploadInfoStr,
+                         @RequestParam(name="orgName",defaultValue="") String orgName,
+                         @RequestParam(name="managerName",defaultValue="") String managerName,
+                         @RequestParam(name="creator",defaultValue="") String creator,
+                         @RequestParam(name="tel",defaultValue="") String tel,
+
 
                           HttpServletRequest request,
                           HttpServletResponse response,
@@ -46,7 +51,10 @@ public class UploadController {
 
         Table1 table1 = new Table1();
 
-
+        table1.setOrgName(orgName);
+        table1.setManagerName(managerName);
+        table1.setCreator(creator);
+        table1.setTel(tel);
 
         Map maps  = (Map)JSON.parse(uploadInfoStr);
 
@@ -54,7 +62,7 @@ public class UploadController {
             Map<String,String> tmp = (Map<String,String>)maps.get(i+"");
             String amount = tmp.get("amount");
             String mark = tmp.get("mark");
-            String item = tmp.get("item");
+            String item = tmp.get("cellname");
 
             if(item.contains("（1）")){
                 table1.setCol1(amount);
@@ -71,14 +79,14 @@ public class UploadController {
                 table1.setCol1_2(amount);
                 table1.setColmark1_2(mark);
             }else if(item.contains("（1.3）")){
-                table1.setCol1(amount);
-                table1.setColmark1(mark);
+                table1.setCol1_3(amount);
+                table1.setColmark1_3(mark);
             }else if(item.contains("（1.4）")){
-                table1.setCol1(amount);
-                table1.setColmark1(mark);
+                table1.setCol1_4(amount);
+                table1.setColmark1_4(mark);
             }else if(item.contains("（1.5）")){
-                table1.setCol1(amount);
-                table1.setColmark1(mark);
+                table1.setCol1_5(amount);
+                table1.setColmark1_5(mark);
             }
 
 
@@ -257,13 +265,12 @@ public class UploadController {
         }catch (Exception e){
             e.printStackTrace();
             Map<String,String> error = new HashMap<>();
-            error.put("F","用户名不存在");
+            error.put("F","数据插入错误");
             return  error;
         }
 
 
         return  null;
-
 
     }
 
@@ -271,7 +278,36 @@ public class UploadController {
 
 
 
-}
+
+
+    @PostMapping("/getCellRequest")
+    public Object getCellRequest(
+                         HttpServletRequest request,
+                         HttpServletResponse response,
+                         Model model) throws Exception {
+
+        System.out.println("getCellRequest开始执行============================");
+
+
+        try{
+            ArrayList<TableStruct> tableStructs = tableStructMapper.findAll();
+
+
+            return  tableStructs;
+
+        }catch (Exception e){
+            e.printStackTrace();
+            Map<String,String> error = new HashMap<>();
+            error.put("F","查询错误");
+            return error;
+        }
+
+    }
+
+
+
+
+    }
 
 
 

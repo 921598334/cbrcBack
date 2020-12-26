@@ -4,7 +4,7 @@ package com.cbrc.back.vo;
 import lombok.Data;
 
 @Data
-public class UploadInfo {
+public class UploadInfoVo {
 
     private Integer key;
     private String item;
