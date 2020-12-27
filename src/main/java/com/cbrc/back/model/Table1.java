@@ -83,6 +83,7 @@ public class Table1 {
     private String period;
     private String creator;
     private String tel;
+    private String date;
 
 
 

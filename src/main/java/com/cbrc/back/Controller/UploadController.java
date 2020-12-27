@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -33,6 +34,11 @@ public class UploadController {
 
     @Autowired
     Table1Mapper table1Mapper;
+
+
+
+    SimpleDateFormat dateformat = new SimpleDateFormat("yyyy-MM-dd");
+
 
     @PostMapping("/upload")
     public Object upload(@RequestParam(name="dataSourceTmp",defaultValue="") String uploadInfoStr,
@@ -55,6 +61,8 @@ public class UploadController {
         table1.setManagerName(managerName);
         table1.setCreator(creator);
         table1.setTel(tel);
+        table1.setDate(dateformat.format(System.currentTimeMillis()));
+
 
         Map maps  = (Map)JSON.parse(uploadInfoStr);
 
