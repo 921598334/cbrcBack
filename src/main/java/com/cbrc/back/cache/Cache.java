@@ -15,7 +15,7 @@ public class Cache {
 
         String dbString="";
         String classString="";
-
+        String avgString = "";
 
         Class<?> clz = Table1.class;
         // 获取实体类的所有属性，返回Field数组
@@ -23,10 +23,13 @@ public class Cache {
         for (Field field : fields) {
             dbString  = dbString+ field.getName()+",";
             classString =classString+ "#{"+classString +"}," ;
+            avgString = avgString + "avg("+classString +"),";
         }
 
 
-        return new String[]{dbString.substring(0,dbString.length()-1),classString.substring(0,classString.length()-1)};
+        return new String[]{dbString.substring(0,dbString.length()-1),
+                classString.substring(0,classString.length()-1),
+                avgString.substring(0,avgString.length()-1)};
     }
 
 

@@ -63,11 +63,19 @@ public class QueryAndDownloadController {
         System.out.println("fromData"+fromDate);
         System.out.println("endDate"+endDate);
 
+        ArrayList<Table1> table1s = null;
 
         //根据不同的表名查询不同的表
         if(tableName.equals("1")){
 
-            ArrayList<Table1> table1s = table1Mapper.find(orgName,fromDate,endDate);
+            if(orgName.equals("")){
+                table1s   = table1Mapper.find(fromDate,endDate);
+            }else{
+                table1s   = table1Mapper.findByOrgName(orgName,fromDate,endDate);
+            }
+
+
+
 
 
             return  table1s;
@@ -117,6 +125,71 @@ public class QueryAndDownloadController {
 
 
 
+
+    @PostMapping("/collectDownload")
+    public Object collectDownload(
+            @RequestParam(name="orgName",defaultValue="") String orgName,
+            @RequestParam(name="tableName",defaultValue="") String tableName,
+            @RequestParam(name="fromDate",defaultValue="") String fromDate,
+            @RequestParam(name="endDate",defaultValue="") String endDate,
+
+            HttpServletRequest request,
+            HttpServletResponse response,
+            Model model) throws Exception {
+
+        System.out.println("collectDownload开始执行============================");
+
+
+        System.out.println("fromData"+fromDate);
+
+        if(fromDate.equals("")){
+            fromDate = "2000-01-01";
+        }
+
+        if(endDate.equals("")){
+            endDate = "2099-12-12";
+        }
+
+
+
+        Table1 table1 = null;
+
+
+        //根据不同的表名查询不同的表
+        if(tableName.equals("1")){
+
+
+            if(orgName.equals("")){
+                table1 = table1Mapper.collectFind(fromDate,endDate);
+            }else{
+                table1 = table1Mapper.collectFindByOrg(orgName,fromDate,endDate);
+            }
+
+
+        }else if(tableName.equals("2")){
+
+        }else if(tableName.equals("3")){
+
+        }else if(tableName.equals("4")){
+
+        }
+
+
+
+
+
+
+
+        //开始生成表
+        String filePath = downloadService.downloadExcel("1",table1,response);
+
+
+
+        return  filePath;
+
+
+
+    }
 
 
 
