@@ -2,7 +2,7 @@ package com.cbrc.back.Controller;
 
 
 
-
+import javax.servlet.http.Cookie;
 import com.cbrc.back.model.Userinfo;
 import com.cbrc.back.service.UserinfoService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.Map;
-
+import java.util.UUID;
 
 
 @CrossOrigin("*")
@@ -24,13 +24,6 @@ public class LoginController {
     UserinfoService userinfoService;
 
 
-
-    @GetMapping("/login")
-    public String login(Model model){
-
-        System.out.print("get");
-         return  "login";
-    }
 
 
     @PostMapping("/login")
@@ -55,6 +48,20 @@ public class LoginController {
             return error;
         }else{
             System.out.println("成功查询到用户============================");
+
+            //随机生成一个token
+            String token = UUID.randomUUID().toString();
+
+            userinfo.setToken(token);
+
+            userinfoService.update(userinfo);
+
+
+            //把用户信息存储到cookie中
+//            response.addCookie(new Cookie("token",userinfo.getToken()));
+//            response.addCookie(new Cookie("userName",userinfo.getUsername()));
+
+
             return userinfo;
         }
 
@@ -65,27 +72,27 @@ public class LoginController {
 
 
 
-//    @GetMapping("/logout")
-//    public String logout(
-//            HttpServletRequest request,
-//            HttpServletResponse response
-//    ){
-//
-//        request.getSession().removeAttribute("admin");
-//
-//        //java删除cookie的方法
-//        Cookie cookie = new Cookie("token",null);
-//        response.addCookie(cookie);
-//        cookie.setMaxAge(0);
-//        //删除session
-//
-//        request.getSession().removeAttribute("admin");
-//
-//        Cache.studentsCache=null;
-//
-//        System.out.println("已经退出登陆");
-//        return  "redirect:/";
-//    }
+    @GetMapping("/logout")
+    public String logout(
+            HttpServletRequest request,
+            HttpServletResponse response
+    ){
+
+        request.getSession().removeAttribute("admin");
+
+        //java删除cookie的方法
+        Cookie cookie = new Cookie("token",null);
+        response.addCookie(cookie);
+        cookie.setMaxAge(0);
+        //删除session
+
+        request.getSession().removeAttribute("admin");
+
+
+
+        System.out.println("已经退出登陆");
+        return  "redirect:/";
+    }
 
 
 }

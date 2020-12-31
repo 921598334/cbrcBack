@@ -25,4 +25,10 @@ public interface UserinfoMapper {
     //检查用户名和密码是否匹配
     @Select("select * from userinfo where username= #{username} and password = #{password}")
     Userinfo check(Userinfo user);
+
+
+
+    //更新用户信息
+    @Update("UPDATE userinfo SET username = #{username}, truename = #{truename},  password = #{password}, orgid = #{orgid}, state = #{state}, token = #{token}, modified = #{modified} where userid = #{userid}")
+    void update(Userinfo user);
 }

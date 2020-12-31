@@ -2,6 +2,7 @@ package com.cbrc.back.tools;
 
 import com.cbrc.back.mapper.TableStructMapper;
 import com.cbrc.back.model.Table1;
+import com.cbrc.back.model.Table3;
 import com.cbrc.back.model.TableStruct;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -29,17 +30,19 @@ public class ExcelTool {
 
     //templateId:模版索引
     //value:需要填充的直，其按照key，value存储，
-    public String writeExcelPOI(String templateId,Table1 table1,HttpServletResponse response) {
+    public String writeExcelPOI1(Table1 table1,HttpServletResponse response) {
         try {
 
             String fileName = "";
-            if(templateId.equals("1")){
+
+
+            if(table1.getFiletype().equals("1")){
                 fileName = "附件1：专业代理、经纪用表（2020修订版）.XLS";
-            }else if(templateId.equals("2")){
+            }else if(table1.getFiletype().equals("2")){
                 fileName = "附件2：公估机构用表.xls";
-            }else if(templateId.equals("3")){
+            }else if(table1.getFiletype().equals("3")){
                 fileName = "附件3：合作销售寿险公司产品统计表.xls";
-            }else if(templateId.equals("4")){
+            }else if(table1.getFiletype().equals("4")){
                 fileName = "附件4：银邮代理机构用表（2020年3月修订版）.XLS";
             }
 
@@ -60,14 +63,13 @@ public class ExcelTool {
 
 
             //查询查询需要填充的值
-            ArrayList<TableStruct> tableStructs = tableStructMapper.findByRepIdExcludeMark(templateId);
+            ArrayList<TableStruct> tableStructs = tableStructMapper.findByRepIdExcludeMark(table1.getFiletype());
 
             for(int i=0;i<tableStructs.size();i++){
 
                 int rowId= Integer.parseInt(tableStructs.get(i).getRow_id()) ;
                 int colId= Integer.parseInt(tableStructs.get(i).getCol_id()) ;
                 String item = tableStructs.get(i).getCellname();
-
 
 
                 //如果有这个符号，表示是金额，备注信息
@@ -90,7 +92,11 @@ public class ExcelTool {
                     else if(item.contains("（1.2）")){
                         amountValue = table1.getCol1_2();
                         markValue = table1.getColmark1_2();
-                    }else if(item.contains("（1.3）")){
+                    } else if(item.contains("（1.21）")){
+                        amountValue = table1.getCol1_21();
+                        markValue = table1.getColmark1_21();
+                    }
+                    else if(item.contains("（1.3）")){
                         amountValue =  table1.getCol1_3();
                         markValue = table1.getColmark1_3();
                     }else if(item.contains("（1.4）")){
@@ -143,7 +149,15 @@ public class ExcelTool {
                     }else if(item.contains("（4.1）")){
                         amountValue = table1.getCol4_1();
                         markValue = table1.getColmark4_1();
-                    }else if(item.contains("（4.11）")){
+                    }else if(item.contains("（4.2）")){
+                        amountValue = table1.getCol4_2();
+                        markValue = table1.getColmark4_2();
+                    }else if(item.contains("（4.3）")){
+                        amountValue = table1.getCol4_3();
+                        markValue = table1.getColmark4_3();
+                    }
+
+                    else if(item.contains("（4.11）")){
                         amountValue = table1.getCol4_11();
                         markValue = table1.getColmark4_11();
                     }
@@ -158,6 +172,9 @@ public class ExcelTool {
                     }else if(item.contains("（5.2）")){
                         amountValue = table1.getCol5_2();
                         markValue = table1.getColmark5_2();
+                    }else if(item.contains("（5.3）")){
+                        amountValue = table1.getCol5_3();
+                        markValue = table1.getColmark5_3();
                     }
 
 
@@ -220,6 +237,10 @@ public class ExcelTool {
                     }
 
 
+                    else if(item.contains("（10）")){
+                        amountValue = table1.getCol10();
+                        markValue = table1.getColmark10();
+                    }
                     else if(item.contains("（10.1）")){
                         amountValue = table1.getCol10_1();
                         markValue = table1.getColmark10_1();
@@ -241,6 +262,9 @@ public class ExcelTool {
                     }else if(item.contains("（11.3）")){
                         amountValue = table1.getCol11_3();
                         markValue = table1.getColmark11_3();
+                    }else if(item.contains("（11.11）")){
+                        amountValue = table1.getCol11_11();
+                        markValue = table1.getColmark11_11();
                     }
 
                     else if(item.contains("（12.1）")){
@@ -340,6 +364,14 @@ public class ExcelTool {
         }
 
         return null;
+    }
+
+
+
+    public String writeExcelPOI3(Table3 table3, HttpServletResponse response) {
+
+        return null;
+
     }
 
 

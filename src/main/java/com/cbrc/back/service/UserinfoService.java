@@ -28,4 +28,9 @@ public class UserinfoService {
     public Userinfo findById(Integer user_id) {
         return userinfoMapper.findById(user_id);
     }
+
+
+    public void update(Userinfo userinfo){
+        userinfoMapper.update(userinfo);
+    }
 }

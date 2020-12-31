@@ -18,7 +18,7 @@ class BackApplicationTests {
 
         String dbString="";
         String classString="";
-        String avgString = "";
+        String sumString = "";
 
         Class<?> clz = Table1.class;
         // 获取实体类的所有属性，返回Field数组
@@ -26,11 +26,12 @@ class BackApplicationTests {
         for (Field field : fields) {
             dbString  = dbString+ field.getName()+",";
             classString =classString+ "#{"+field.getName() +"}," ;
-            avgString = avgString + "sum("+field.getName() +") as "+field.getName()+",";
+            sumString = sumString + "sum("+field.getName() +") as "+field.getName()+",";
         }
 
-        //System.out.println(dbString);
-        System.out.println(avgString);
+        System.out.println(dbString);
+        //System.out.println(classString);
+        //System.out.println(sumString);
     }
 
 }
