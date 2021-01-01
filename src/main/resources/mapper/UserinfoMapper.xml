@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cbrc.back.mapper.UserinfoMapper">
+
+
+
+
+
+    <!--<select id="findByToken" resultType="com.cbrc.back.model.Userinfo" parameterType="java.lang.String">-->
+        <!--select * from userinfo where token= #{token}-->
+    <!--</select>-->
+
+
+    <!--<select id="findById" resultType="com.cbrc.back.model.Userinfo" parameterType="java.lang.Integer">-->
+        <!--select * from userinfo where userid= #{userid}-->
+    <!--</select>-->
+
+
+    <!--<select id="findByUserName" resultType="com.cbrc.back.model.Userinfo" parameterType="java.lang.String">-->
+        <!--select * from userinfo where name= #{username}-->
+    <!--</select>-->
+
+
+    <select id="check" resultType="com.cbrc.back.model.Userinfo" parameterType="com.cbrc.back.model.Userinfo">
+        select * from userinfo where username= #{username} and password = #{password}
+    </select>
+
+
+
+    <update id="update" parameterType="com.cbrc.back.model.Userinfo">
+        UPDATE userinfo SET username = #{username}, truename = #{truename},  password = #{password}, orgid = #{orgid}, state = #{state}, token = #{token}, modified = #{modified} where userid = #{userid}
+    </update>
+
+
+
+</mapper>

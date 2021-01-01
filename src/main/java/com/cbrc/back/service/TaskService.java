@@ -23,17 +23,18 @@ public class TaskService {
     TaskMapper taskMapper;
 
     //添加,添加后返回
-    public Task insert(Task task){
-
+    public void insert(Task task){
         taskMapper.insert(task);
 
     }
 
 
-    //根据查询所有任务
+    //查询所有任务
     public List<Task> find(){
         return  taskMapper.find();
     }
+
+
 
 
 

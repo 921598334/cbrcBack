@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cbrc.back.mapper.TableStructMapper">
+
+
+
+
+
+
+    <select id="findAll" resultType="com.cbrc.back.model.TableStruct">
+        select * from cellinfo
+    </select>
+
+
+
+    <select id="findByRepId" parameterType="java.lang.String" resultType="com.cbrc.back.model.TableStruct">
+        select * from cellinfo where repid = #{repid}
+    </select>
+
+
+
+    <select id="findByRepIdExcludeMark" parameterType="java.lang.String" resultType="com.cbrc.back.model.TableStruct">
+        select * from cellinfo where repid = #{repid} and cellname not like '%备注%'
+    </select>
+
+
+
+
+</mapper>

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cbrc.back.mapper.TaskMapper">
+    <!--<resultMap id="BaseResultMap" type="com.cbrc.back.model.Task" >-->
+        <!--<result column="id" property="id" />-->
+        <!--<result column="tasktitle" property="tasktitle" />-->
+        <!--<result column="taskdescribe" property="taskdescribe" />-->
+        <!--<result column="fromdate" property="fromdate" />-->
+        <!--<result column="enddate" property="enddate" />-->
+        <!--<result column="filetype" property="filetype" />-->
+        <!--<result column="orgtype" property="orgtype" />-->
+        <!--<result column="userid" property="userid" />-->
+        <!--<result column="createtime" property="createtime" />-->
+
+    <!--</resultMap>-->
+    <!--<select id="findById" resultMap="BaseResultMap">-->
+        <!--select * from user where id = #{id}-->
+    <!--</select>-->
+
+
+
+    <select id="find" resultType="com.cbrc.back.model.Task">
+        select * from task
+    </select>
+
+
+
+
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.cbrc.back.model.Task">
+        insert into task(tasktitle,taskdescribe,fromdate,enddate,filetype,orgtype,userid,createtime) values  (#{tasktitle},#{taskdescribe},#{fromdate},#{enddate},#{filetype},#{orgtype},#{userid},#{createtime})
+    </insert>
+
+
+
+</mapper>

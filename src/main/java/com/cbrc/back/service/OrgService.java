@@ -25,8 +25,10 @@ public class OrgService {
     //查询所有机构类型，机构信息
     public List<OrgType> findAll() {
 
-        List<OrgType> orgTypeList = orgTypeMapper.find();
+        //得到所有的机构类型
+        List<OrgType> orgTypeList = orgTypeMapper.findAll();
 
+        //查询该机构类别下的所有公司
         for(OrgType orgType : orgTypeList){
             List<OrgInfo> orgInfoList = orgInfoMapper.findByOrgtype(orgType.getOrgtype());
 

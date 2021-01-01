@@ -18,16 +18,16 @@ public interface TableStructMapper {
 
 
 
-    @Select("select * from cellinfo")
+//    //@Select("select * from cellinfo")
     ArrayList<TableStruct> findAll();
-
-
-    //根据表的类型查询表的结构
-    @Select("select * from cellinfo where repid = #{repid}")
+//
+//
+//    //根据表的类型查询表的结构
+//    //@Select("select * from cellinfo where repid = #{repid}")
     ArrayList<TableStruct> findByRepId(@Param("repid") String repid);
-
-    //根据表的类型查询表的结构，滤除备注栏
-    @Select("select * from cellinfo where repid = #{repid} and cellname not like '%备注%'")
+//
+//    //根据表的类型查询表的结构，滤除备注栏
+//    //@Select("select * from cellinfo where repid = #{repid} and cellname not like '%备注%'")
     ArrayList<TableStruct> findByRepIdExcludeMark(@Param("repid") String repid);
 }
 

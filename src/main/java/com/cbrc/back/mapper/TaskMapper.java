@@ -18,16 +18,17 @@ public interface TaskMapper {
 
 
 
-    //添加
-    @Insert("insert into task(tasktitle,taskdescribe,fromdate,enddate,filetype,orgtype,userid,createtime) " +
-            "values" +
-            " (#{tasktitle},#{taskdescribe},#{fromdate},#{enddate},#{filetype},#{orgtype},#{userid}),#{createtime}")
+//    //添加
+//    @Insert("insert into task(tasktitle,taskdescribe,fromdate,enddate,filetype,orgtype,userid,createtime) " +
+//            "values" +
+//            " (#{tasktitle},#{taskdescribe},#{fromdate},#{enddate},#{filetype},#{orgtype},#{userid}),#{createtime}")
     void insert(Task task);
 
 
     //根据查询所有任务
-    @Select("select * from task ")
+//    @Select("select * from task ")
     List<Task> find();
+
 
 
 }

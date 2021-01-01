@@ -318,18 +318,15 @@ public class UploadController {
                     System.out.println("没有匹配");
                 }
 
+            }
 
-                try{
-                    table1Mapper.insert(table1);
-                }catch (Exception e){
-                    e.printStackTrace();
-                    Map<String,String> error = new HashMap<>();
-                    error.put("F","数据插入错误");
-                    return  error;
-                }
-
-
-
+            try{
+                table1Mapper.insert(table1);
+            }catch (Exception e){
+                e.printStackTrace();
+                Map<String,String> error = new HashMap<>();
+                error.put("F","数据插入错误");
+                return  error;
             }
 
 

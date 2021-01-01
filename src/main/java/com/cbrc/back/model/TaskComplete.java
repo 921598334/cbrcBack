@@ -12,7 +12,7 @@ public class TaskComplete {
     private Integer iscomplete;
     private String completeTime;
     private Integer userid;
-    private Integer orgid;
+    private String orgid;
 
 
 }

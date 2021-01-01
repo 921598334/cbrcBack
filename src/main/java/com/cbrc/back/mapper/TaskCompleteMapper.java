@@ -2,6 +2,7 @@ package com.cbrc.back.mapper;
 
 
 import com.cbrc.back.model.Task;
+import com.cbrc.back.model.TaskComplete;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
@@ -15,15 +16,12 @@ public interface TaskCompleteMapper {
 
 
     //添加
-    @Insert("insert into taskcomplete(taskid,iscomplete,userid,orgid) " +
-            "values" +
-            " (#{taskid},#{iscomplete},#{userid},#{orgid}")
-    void insert(TaskCompleteMapper taskCompleteMapper);
+//    @Insert("insert into taskcomplete(taskid,iscomplete,userid,orgid) " +
+//            "values" +
+//            " (#{taskid},#{iscomplete},#{userid},#{orgid}")
+    void insert(TaskComplete taskComplete);
 
 
-    //根据查询所有任务
-//    @Select("select * from task ")
-//    List<Task> find();
 
 
 }

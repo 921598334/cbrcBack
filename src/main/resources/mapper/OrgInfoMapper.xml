@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cbrc.back.mapper.OrgInfoMapper">
+
+
+
+
+
+    <select id="find"  resultType="com.cbrc.back.model.OrgInfo">
+        select * from orginfo
+    </select>
+
+
+
+    <select id="findByOrgtype" parameterType="java.lang.Integer" resultType="com.cbrc.back.model.OrgInfo">
+        select * from orginfo where orgtype = #{orgtype}
+    </select>
+
+
+
+
+
+
+
+</mapper>
