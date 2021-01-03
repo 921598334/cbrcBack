@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 
 @Service
 public class DownloadService {
@@ -24,10 +25,10 @@ public class DownloadService {
 
     }
 
-    public String downloadExcel3(Table3 table3, HttpServletResponse response){
+    public String downloadExcel3(List<Table3> table3s, HttpServletResponse response){
 
 
-        return excelTool.writeExcelPOI3(table3,response);
+        return excelTool.writeExcelPOI3(table3s,response);
 
     }
 

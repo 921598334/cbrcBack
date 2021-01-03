@@ -12,7 +12,10 @@ public class OrgInfo {
     private String parentorgid;
     private String isreal;
     private String state;
-    private String  orgType;
+    private String orgtype;
+
+
+    private String  manager;
 
 
 

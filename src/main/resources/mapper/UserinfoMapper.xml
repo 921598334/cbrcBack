@@ -13,14 +13,14 @@
     <!--</select>-->
 
 
-    <!--<select id="findById" resultType="com.cbrc.back.model.Userinfo" parameterType="java.lang.Integer">-->
-        <!--select * from userinfo where userid= #{userid}-->
-    <!--</select>-->
+    <select id="findById" resultType="com.cbrc.back.model.Userinfo" parameterType="java.lang.Integer">
+        select * from userinfo where userid= #{userid}
+    </select>
 
 
-    <!--<select id="findByUserName" resultType="com.cbrc.back.model.Userinfo" parameterType="java.lang.String">-->
-        <!--select * from userinfo where name= #{username}-->
-    <!--</select>-->
+    <select id="findByUserName" resultType="com.cbrc.back.model.Userinfo" parameterType="java.lang.String">
+        select * from userinfo where name= #{username}
+    </select>
 
 
     <select id="check" resultType="com.cbrc.back.model.Userinfo" parameterType="com.cbrc.back.model.Userinfo">

@@ -18,10 +18,7 @@ public interface OrgTypeMapper {
 
 
 
-//    //查询所有机构类型
-//   // @Select("select * from dic_orgtype ")
-    List<OrgType> findAll();
-
+    List<OrgType> query(OrgType orgType);
 
 }
 

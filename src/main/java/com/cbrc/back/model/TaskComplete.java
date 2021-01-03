@@ -10,9 +10,12 @@ public class TaskComplete {
     private Integer id;
     private Integer taskid;
     private Integer iscomplete;
-    private String completeTime;
+    private String completetime;
     private Integer userid;
     private String orgid;
+
+    //任务详情
+    private Task taskinfo;
 
 
 }

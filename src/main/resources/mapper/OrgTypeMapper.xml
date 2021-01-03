@@ -8,11 +8,16 @@
 
 
 
-    <select id="findAll"  resultType="com.cbrc.back.model.OrgType">
+
+    <select id="query"  parameterType="com.cbrc.back.model.OrgType" resultType="com.cbrc.back.model.OrgType">
         select * from dic_orgtype
+        <trim prefix="WHERE" prefixOverrides="AND |OR">
+
+            <if test="orgtype != null "> AND orgtype=#{orgtype}</if>
+
+        </trim>
+
     </select>
-
-
 
 
 

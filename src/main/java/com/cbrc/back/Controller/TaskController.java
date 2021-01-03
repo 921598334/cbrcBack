@@ -2,21 +2,14 @@ package com.cbrc.back.Controller;
 
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
-import com.cbrc.back.model.OrgType;
-import com.cbrc.back.model.Task;
-import com.cbrc.back.model.TaskComplete;
-import com.cbrc.back.model.Userinfo;
-import com.cbrc.back.service.OrgService;
+import com.cbrc.back.model.*;
+import com.cbrc.back.service.OrgTypeService;
 import com.cbrc.back.service.TaskCompleteService;
 import com.cbrc.back.service.TaskService;
-import com.cbrc.back.service.UserinfoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.text.SimpleDateFormat;
@@ -28,7 +21,7 @@ import java.util.*;
 public class TaskController {
 
     @Autowired
-    OrgService orgService;
+    OrgTypeService orgTypeService;
 
     @Autowired
     TaskService taskService;
@@ -58,7 +51,7 @@ public class TaskController {
 
         try{
             //得到所有的机构类型
-            List<OrgType> orgTypeList = orgService.findAll();
+            List<OrgType> orgTypeList = orgTypeService.findAll();
             return orgTypeList;
         }catch (Exception e){
             e.printStackTrace();
@@ -77,6 +70,7 @@ public class TaskController {
             @RequestParam(name="taskDescribe",defaultValue="") String taskDescribe,
             @RequestParam(name="selectedValue",defaultValue="") String selectedValue,
             @RequestParam(name="userid",defaultValue="") String userid,
+            @RequestParam(name="period",defaultValue="") String period,
 
 
             HttpServletRequest request,
@@ -95,6 +89,9 @@ public class TaskController {
         task.setTaskdescribe(taskDescribe);
         task.setUserid(Integer.parseInt(userid) );
         task.setCreatetime(dateformat.format(System.currentTimeMillis()));
+        //还需要选择该任务是那一年第几季度的任务
+        task.setPeriod(period);
+
 
         //selectedValue得到的是map类型，需要转换为list
         List<String> selectedValueList = new ArrayList<>();
@@ -109,17 +106,12 @@ public class TaskController {
         task.setOrgtype(str);
 
 
-
-
         try{
             taskService.insert(task);
 
         }catch (Exception e){
             e.printStackTrace();
         }
-
-
-
 
 
         //数据插入后生成taskcomplete表
@@ -131,11 +123,169 @@ public class TaskController {
             taskCompleteService.insert(taskComplete);
         }
 
-
-
         return  null;
 
     }
+
+
+
+
+
+
+    //管理员查询已经发布的任务
+    @PostMapping("/queryTask")
+    public Object queryTask(
+            @RequestParam(name="taskid",defaultValue="") String taskid,
+            @RequestParam(name="iscomplete",defaultValue="") String iscomplete,
+            @RequestParam(name="completetime",defaultValue="") String completetime,
+            @RequestParam(name="userid",defaultValue="") String userid,
+            @RequestParam(name="orgid",defaultValue="") String orgid,
+            @RequestParam(name="fromDate",defaultValue="") String fromDate,
+            @RequestParam(name="endDate",defaultValue="") String endDate,
+
+
+            HttpServletRequest request,
+            HttpServletResponse response,
+            Model model) throws Exception {
+
+        System.out.println("queryTask 开始执行============================");
+
+
+
+        if(fromDate.equals("")){
+            fromDate = "2000-01-01";
+        }
+
+        if(endDate.equals("")) {
+            endDate = "2099-12-12";
+        }
+
+
+
+        Task task = new Task();
+
+
+        try{
+            List<Task> tasks = taskService.query(task);
+
+            //文件类型名称需要替换
+            for(Task t :tasks){
+                if(t.getFiletype().equals("1")){
+                    t.setFiletype("重庆保险中介机构季度数据表-专业代理、经纪机构用表");
+                }else if(t.getFiletype().equals("2")){
+                    t.setFiletype("重庆保险中介机构季度数据表-公估机构用表");
+                }else if(t.getFiletype().equals("3")){
+                    t.setFiletype("重庆保险中介机构季度数据表-专业中介机构销售寿险公司长期保险产品统计表");
+                }else if(t.getFiletype().equals("4")){
+                    t.setFiletype("重庆保险中介机构季度数据表-银邮代理机构用表");
+                }
+
+            }
+
+            return  tasks;
+        }catch (Exception e){
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+
+
+
+
+
+
+    //用户查询自己需要完成的任务
+    @PostMapping("/queryTaskComplete")
+    public Object queryTaskComplete(
+
+            @RequestParam(name="taskStatus",defaultValue="") String taskStatus,
+
+            @RequestParam(name="orgid",defaultValue="") String orgid,
+            @RequestParam(name="fromDate",defaultValue="") String fromDate,
+            @RequestParam(name="endDate",defaultValue="") String endDate,
+
+
+            HttpServletRequest request,
+            HttpServletResponse response,
+            Model model) throws Exception {
+
+        System.out.println("queryTaskComplete 开始执行============================");
+
+
+
+        if(fromDate.equals("")){
+            fromDate = "2000-01-01";
+        }
+
+        if(endDate.equals("")){
+            endDate = "2099-12-12";
+        }
+
+
+
+
+
+
+//        //最后需要返回对对象
+//        List<Map<String,String>> resultMap = new ArrayList<>();
+//
+//        TaskComplete taskComplete = new TaskComplete();
+//        taskComplete.setIscomplete(Integer.parseInt(taskStatus) );
+//        taskComplete.setOrgid(orgid);
+//        //查询该机构id下已经完成的任务，在规定的时间范围了
+//        List<TaskComplete> taskCompleteList = taskCompleteService.query(taskComplete,fromDate,endDate);
+//
+//        //开始查询任务标题，任务描述，任务发布时间，开始时间，结束时间信息
+//        for(TaskComplete taskCompleteTmp : taskCompleteList){
+//            Map<String,String> resultMapTmp = new HashMap<>();
+//
+//            Task task1 = taskCompleteTmp.getTaskinfo();
+//
+//            resultMapTmp.put("tasktitle",task1.getTasktitle());
+//            resultMapTmp.put("taskdescribe",task1.getTaskdescribe());
+//            resultMapTmp.put("createtime",task1.getCreatetime());
+//            resultMapTmp.put("fromdate",task1.getFromdate());
+//            resultMapTmp.put("enddate",task1.getEnddate());
+//            resultMapTmp.put("taskcompleteid", taskCompleteTmp.getId()+"");
+//            resultMapTmp.put("iscomplete",taskStatus);
+//
+//            resultMap.add(resultMapTmp);
+//        }
+//
+//        return resultMap;
+
+
+
+
+
+        TaskComplete taskComplete = new TaskComplete();
+        taskComplete.setOrgid(orgid);
+        taskComplete.setIscomplete(Integer.parseInt(taskStatus) );
+
+        try{
+            List<TaskComplete> taskCompletes = taskCompleteService.query(taskComplete,fromDate,endDate);
+
+            return  taskCompletes;
+        }catch (Exception e){
+            e.printStackTrace();
+            return null;
+        }
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

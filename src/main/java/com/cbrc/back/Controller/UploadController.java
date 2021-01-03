@@ -5,20 +5,20 @@ package com.cbrc.back.Controller;
 
 import com.alibaba.fastjson.JSON;
 
-import com.cbrc.back.mapper.Table1Mapper;
-import com.cbrc.back.mapper.Table3Mapper;
 import com.cbrc.back.mapper.TableStructMapper;
-import com.cbrc.back.model.Table1;
-import com.cbrc.back.model.Table3;
-import com.cbrc.back.model.TableStruct;
+import com.cbrc.back.model.*;
+import com.cbrc.back.service.OrgInfoService;
+import com.cbrc.back.service.Table1Service;
+import com.cbrc.back.service.Table3Service;
+import com.cbrc.back.service.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -33,33 +33,64 @@ public class UploadController {
 
     @Autowired
     TableStructMapper tableStructMapper;
+    @Autowired
+    TaskService taskService;
 
     @Autowired
-    Table1Mapper table1Mapper;
+    OrgInfoService orgInfoService;
+
     @Autowired
-    Table3Mapper table3Mapper;
+    Table1Service table1Service;
+    @Autowired
+    Table3Service table3Service;
 
 
-    SimpleDateFormat dateformat = new SimpleDateFormat("yyyy-MM-dd");
 
+    Calendar now = Calendar.getInstance();
 
     @PostMapping("/upload")
     public Object upload(@RequestParam(name="dataSourceTmp",defaultValue="") String uploadInfoStr,
-                         @RequestParam(name="orgName",defaultValue="") String orgName,
-                         @RequestParam(name="managerName",defaultValue="") String managerName,
-                         @RequestParam(name="creator",defaultValue="") String creator,
-                         @RequestParam(name="tel",defaultValue="") String tel,
-                         @RequestParam(name="period",defaultValue="") String period,
+                         @RequestParam(name="orgid",defaultValue="") String orgid,
                          @RequestParam(name="fileType",defaultValue="") String fileType,
                          @RequestParam(name="userid",defaultValue="") String userid,
-
-
+                         @RequestParam(name="taskCompleteId",defaultValue="") String taskCompleteId,
+                         @RequestParam(name="taskId",defaultValue="") String taskId,
                           HttpServletRequest request,
                           HttpServletResponse response,
                           Model model) throws Exception {
 
         System.out.println("upload开始执行============================");
 
+
+        //根据taskId获取任务完成时间
+        Task taskTmp = new Task();
+        taskTmp.setId(Integer.parseInt(taskId) );
+        String taskPeroid  = taskService.query(taskTmp).get(0).getPeriod();
+
+
+        //任务完成时间设置为任务设置季度的最后一个月的28号
+        if(taskPeroid.equals("1")){
+            //第一季度（1-3）
+            taskPeroid = now.get(Calendar.YEAR)+"-"+"03"+"-"+"28";
+        }else if(taskPeroid.equals("2")){
+            //第一季度（4-6）
+            taskPeroid = now.get(Calendar.YEAR)+"-"+"06"+"-"+"28";
+        }else if(taskPeroid.equals("3")){
+            //第一季度（7-9）
+            taskPeroid = now.get(Calendar.YEAR)+"-"+"09"+"-"+"28";
+        }else if(taskPeroid.equals("4")){
+            //第一季度（10-12）
+            taskPeroid = now.get(Calendar.YEAR)+"-"+"12"+"-"+"28";
+        }
+
+
+
+        //根据orgid，得到机构类型
+        OrgInfo orgInfoTmp = new OrgInfo();
+        orgInfoTmp.setOrgid(orgid);
+        OrgInfo orgInfo = orgInfoService.query(orgInfoTmp).get(0);
+
+        String orgType = orgInfo.getOrgtype();
 
         //其中文件类型1，2，4是相同的操作，
         if(fileType.equals("3")){
@@ -83,8 +114,12 @@ public class UploadController {
                 table3.setCol10(tmp.get("col10"));
                 table3.setCol11(tmp.get("col11"));
                 table3.setUserid(Integer.parseInt(userid) );
+                table3.setTaskcompleteid(Integer.parseInt(taskCompleteId) );
+                table3.setFiletype(fileType);
+                table3.setDate(taskPeroid);
+                table3.setOrgtype(Integer.parseInt(orgType) );
 
-                table3Mapper.insert(table3);
+                table3Service.insert(table3,userid,taskCompleteId);
             }
 
 
@@ -92,14 +127,12 @@ public class UploadController {
         }else{
 
             Table1 table1 = new Table1();
+
             table1.setUserid(Integer.parseInt(userid) );
-            table1.setOrgName(orgName);
-            table1.setManagerName(managerName);
-            table1.setCreator(creator);
-            table1.setTel(tel);
-            table1.setPeriod(period);
-            table1.setDate(dateformat.format(System.currentTimeMillis()));
+            table1.setTaskcompleteid(Integer.parseInt(taskCompleteId));
+            table1.setDate(taskPeroid);
             table1.setFiletype(fileType);
+            table1.setOrgtype(Integer.parseInt(orgType) );
 
             Map maps  = (Map)JSON.parse(uploadInfoStr);
 
@@ -321,7 +354,11 @@ public class UploadController {
             }
 
             try{
-                table1Mapper.insert(table1);
+
+                table1Service.insert(table1,userid,taskCompleteId);
+
+
+
             }catch (Exception e){
                 e.printStackTrace();
                 Map<String,String> error = new HashMap<>();
@@ -331,8 +368,6 @@ public class UploadController {
 
 
         }
-
-
 
 
         return  null;

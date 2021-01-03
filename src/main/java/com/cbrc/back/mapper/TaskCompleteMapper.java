@@ -14,15 +14,12 @@ public interface TaskCompleteMapper {
 
 
 
-
-    //添加
-//    @Insert("insert into taskcomplete(taskid,iscomplete,userid,orgid) " +
-//            "values" +
-//            " (#{taskid},#{iscomplete},#{userid},#{orgid}")
     void insert(TaskComplete taskComplete);
 
 
+    List<TaskComplete> query(TaskComplete taskComplete);
 
+    void update(TaskComplete taskComplete);
 
 }
 

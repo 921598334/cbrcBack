@@ -9,33 +9,18 @@ import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @Mapper
 public interface Table3Mapper {
 
 
-    //添加
-//    @Insert("insert into Table3(col1,col2,col3,col4,col5,col6,col7,col8,col9,col10,col11,userid) " +
-//            "values" +
-//            " (#{col1},#{col2},#{col3},#{col4},#{col5},#{col6},#{col7},#{col8},#{col9},#{col10},#{col11},#{userid})")
+
     void insert(Table3 table3);
 
 
-    //查询某个公司
-//    @Select("select * from Table where orgName= #{orgName} and date >= #{fromData} and date <= #{endData} and filetype = #{filetype}")
-    ArrayList<Table3> findByOrgName(@Param("orgName") String orgName, @Param("fromData") String fromData, @Param("endData") String endData, @Param("filetype") String filetype);
 
-
-
-
-    //根据表类型查询,所有数据
-//    @Select("select * from Table3 ")
-    ArrayList<Table3> find();
-
-
-    //单个下载
-//    @Select("select * from Table3 where id= #{id}")
-    Table3 findById(@Param("id") String id);
+    List<Table3> query(Table3 table3);
 
 
 

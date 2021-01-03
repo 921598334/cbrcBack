@@ -30,8 +30,8 @@ public class TaskService {
 
 
     //查询所有任务
-    public List<Task> find(){
-        return  taskMapper.find();
+    public List<Task> query(Task task){
+        return  taskMapper.query(task);
     }
 
 

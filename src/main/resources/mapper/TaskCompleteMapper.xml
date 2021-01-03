@@ -16,8 +16,34 @@
 
 
 
+    <select id="query" resultType="com.cbrc.back.model.TaskComplete" parameterType="com.cbrc.back.model.TaskComplete">
+
+        select * from taskcomplete
+
+        <trim prefix="WHERE" prefixOverrides="AND |OR">
+
+            <if test="id != null "> AND id=#{id}</if>
+
+            <if test="taskid != null "> AND taskid=#{taskid}</if>
+
+            <if test="iscomplete != null "> AND iscomplete=#{iscomplete}</if>
+
+            <if test="userid != null "> AND userid=#{userid}</if>
+
+            <if test="orgid != null  "> AND orgid=#{orgid}</if>
+        </trim>
+    </select>
 
 
+
+
+
+
+    <select id="update" resultType="com.cbrc.back.model.TaskComplete" parameterType="com.cbrc.back.model.TaskComplete">
+
+        update  taskcomplete set  iscomplete = #{iscomplete} , userid=#{userid} ,completetime = #{completetime} where id=#{id}
+
+    </select>
 
 
 </mapper>

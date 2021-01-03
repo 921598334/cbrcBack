@@ -22,9 +22,17 @@ public class Table3 {
     private String col11;
 
 
-
+    private String date;
     private Integer userid;
+    private String filetype;
+    private Integer taskcompleteid;
+    private Integer orgtype;
 
-
-
+    //此外还需要通过orgtype得到机构名称，任务标题
+    private String orgName;
+    private String taskTitle;
+    private String manager;
+    private String period;
+    private String userName;
+    private String tel;
 }

@@ -83,14 +83,12 @@ public class Table1 {
     private String col15;
 
 
-    private String managerName;
-    private String orgName;
-    private String period;
-    private String creator;
-    private String tel;
-    private String date;
+//    private String managerName;
+//    private String orgName;
+//    private String period;
+//    private String creator;
+//    private String tel;
 
-    private Integer userid;
 
     private String colmark1;
     private String colmark1_1;
@@ -179,7 +177,21 @@ public class Table1 {
 
     private String colmark1_21;
 
+
+    private String date;
+    private Integer userid;
     private String filetype;
+    private Integer taskcompleteid;
+    private Integer orgtype;
+
+
+    //此外还需要通过orgtype得到机构名称，任务标题
+    private String orgName;
+    private String taskTitle;
+    private String manager;
+    private String period;
+    private String userName;
+    private String tel;
 
 
 }

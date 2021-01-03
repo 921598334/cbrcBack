@@ -8,15 +8,18 @@
 
 
 
-    <select id="find"  resultType="com.cbrc.back.model.OrgInfo">
+    <select id="query"  resultType="com.cbrc.back.model.OrgInfo">
         select * from orginfo
+        <trim prefix="WHERE" prefixOverrides="AND |OR">
+
+            <if test="orgid != null "> AND orgid=#{orgid}</if>
+            <if test="orgname != null "> AND orgname=#{orgname}</if>
+            <if test="orgtype != null "> AND orgtype=#{orgtype}</if>
+
+        </trim>
+
     </select>
 
-
-
-    <select id="findByOrgtype" parameterType="java.lang.Integer" resultType="com.cbrc.back.model.OrgInfo">
-        select * from orginfo where orgtype = #{orgtype}
-    </select>
 
 
 

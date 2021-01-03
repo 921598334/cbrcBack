@@ -16,17 +16,7 @@ public interface OrgInfoMapper {
 
 
 
-
-//    //查询所有机构
-//   // @Select("select * from orginfo ")
-    List<OrgInfo> find();
-//
-//
-//    //根据机构类型，查询所有机构
-//   // @Select("select * from orginfo where orgtype = #{orgtype}")
-    List<OrgInfo> findByOrgtype(@Param("orgtype") Integer orgtype);
-
-
+    List<OrgInfo> query(OrgInfo orgInfo);
 
 
 }

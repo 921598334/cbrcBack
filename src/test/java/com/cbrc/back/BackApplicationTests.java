@@ -2,6 +2,7 @@ package com.cbrc.back;
 
 import com.cbrc.back.cache.Cache;
 import com.cbrc.back.model.Table1;
+import com.cbrc.back.model.Table3;
 import com.cbrc.back.model.Task;
 import com.cbrc.back.service.TaskService;
 import org.apache.ibatis.javassist.bytecode.stackmap.BasicBlock;
@@ -28,7 +29,7 @@ class BackApplicationTests {
         String classString="";
         String sumString = "";
 
-        Class<?> clz = Table1.class;
+        Class<?> clz = Table3.class;
         // 获取实体类的所有属性，返回Field数组
         Field[] fields = clz.getDeclaredFields();
         for (Field field : fields) {
@@ -37,8 +38,8 @@ class BackApplicationTests {
             sumString = sumString + "sum("+field.getName() +") as "+field.getName()+",";
         }
 
-        System.out.println(dbString);
-        //System.out.println(classString);
+        //System.out.println(dbString);
+        System.out.println(classString);
         //System.out.println(sumString);
     }
 

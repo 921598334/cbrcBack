@@ -21,8 +21,18 @@
 
 
 
-    <select id="find" resultType="com.cbrc.back.model.Task">
+    <select id="query" resultType="com.cbrc.back.model.Task">
         select * from task
+
+        <trim prefix="WHERE" prefixOverrides="AND |OR">
+
+            <if test="id != null "> AND id=#{id}</if>
+            <if test="tasktitle != null "> AND tasktitle=#{tasktitle}</if>
+
+            <!--<if test="fromDate != null "> AND createtime &gt;= #{fromDate} AND createtime &lt;= #{endDate}</if>-->
+
+        </trim>
+
     </select>
 
 
@@ -30,7 +40,7 @@
 
 
     <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.cbrc.back.model.Task">
-        insert into task(tasktitle,taskdescribe,fromdate,enddate,filetype,orgtype,userid,createtime) values  (#{tasktitle},#{taskdescribe},#{fromdate},#{enddate},#{filetype},#{orgtype},#{userid},#{createtime})
+        insert into task(tasktitle,taskdescribe,fromdate,enddate,filetype,orgtype,userid,createtime,period) values  (#{tasktitle},#{taskdescribe},#{fromdate},#{enddate},#{filetype},#{orgtype},#{userid},#{createtime},#{period})
     </insert>
 
 

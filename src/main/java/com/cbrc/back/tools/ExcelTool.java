@@ -15,10 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 @Component
 public class ExcelTool {
@@ -49,7 +46,6 @@ public class ExcelTool {
 
 
             String fullPath = System.getProperty("user.dir")+"/src/main/resources/static/template/"+fileName;
-            System.out.print(fullPath);
 
 
 
@@ -305,7 +301,7 @@ public class ExcelTool {
                     String cellValue = "";
 
                     if(item.contains("负责人")){
-                        cellValue = table1.getManagerName();
+                        cellValue = table1.getManager();
                         if((xSheet.getRow(rowId-1)).getCell(colId-1)!=null){
                             (xSheet.getRow(rowId-1)).getCell(colId-1).setCellValue(cellValue);
                         }
@@ -319,14 +315,14 @@ public class ExcelTool {
                     }
 
                     if(item.contains("填表人")){
-                        cellValue = "填表人："+table1.getCreator()+"                            "+"联系电话："+table1.getTel();
+                        cellValue = "填表人："+table1.getUserName()+"                            "+"联系电话："+table1.getTel();
                         if((xSheet.getRow(rowId-1)).getCell(colId-1)!=null){
                             (xSheet.getRow(rowId-1)).getCell(colId-1).setCellValue(cellValue);
                         }
                     }
 
                     if(item.contains("统计区间")){
-                        cellValue = "统计区间："+table1.getPeriod();
+                        cellValue = "统计区间："+table1.getDate().split("-")[0]+"年 "+ table1.getPeriod()+"季度";
                         if((xSheet.getRow(rowId-1)).getCell(colId-1)!=null){
                             (xSheet.getRow(rowId-1)).getCell(colId-1).setCellValue(cellValue);
                         }
@@ -338,24 +334,16 @@ public class ExcelTool {
             }
 
 
-
             //生成excel放入该路径下
-            String outPath = System.getProperty("user.dir")+"/src/main/resources/static/download/"+table1.getOrgName()+System.currentTimeMillis()+".xls";
+            String outPath = System.getProperty("user.dir")+"/src/main/resources/static/download/"+table1.getOrgName()+"-"+fileName+"-"+ System.currentTimeMillis()+".xls";
 
             //前端使用该路径下载
-            String downloadPath = "127.0.0.1:8080/download/"+table1.getOrgName()+System.currentTimeMillis()+".xls";
+            String downloadPath = "127.0.0.1:8080/download/"+table1.getOrgName()+"-"+fileName+"-"+System.currentTimeMillis()+".xls";
 
             FileOutputStream out = new FileOutputStream(outPath);
             xwb.write(out);
             out.close();
             return downloadPath;
-
-//            response.setHeader("Content-Disposition", "attachment;Filename=" +fileName+"_"+System.currentTimeMillis() + ".xls");
-//            OutputStream outputStream = response.getOutputStream();
-//            xwb.write(outputStream);
-//            outputStream.close();
-//            return xwb.getBytes();
-
 
 
 
@@ -368,7 +356,129 @@ public class ExcelTool {
 
 
 
-    public String writeExcelPOI3(Table3 table3, HttpServletResponse response) {
+    public String writeExcelPOI3(List<Table3> table3s, HttpServletResponse response) {
+
+        try {
+
+            String fileName = "附件3：合作销售寿险公司产品统计表.xls";
+
+
+            String fullPath = System.getProperty("user.dir")+"/src/main/resources/static/template/"+fileName;
+
+
+            HSSFWorkbook xwb = new HSSFWorkbook(new FileInputStream(fullPath));
+
+
+            HSSFSheet xSheet = xwb.getSheetAt(0);  //获取excel表的第一个sheet
+
+
+            //需要技术是否需要移动最后行
+            //14与15行需要移动
+            //默认可以插入7条数据，如果超过7条需要移动
+            if(table3s.size()>7){
+                //需要移动几行
+                int moveRow = table3s.size()-7;
+
+                //从下标13开移动
+                xSheet.shiftRows(13, moveRow+13,2,true,false);
+
+            }
+
+
+
+
+
+
+
+
+            int count =1;
+            //一共有容器大小的行数
+            for(int rowId=6;rowId<table3s.size()+6;rowId++){
+
+                if(xSheet.getRow(rowId)==null){
+                    xSheet.createRow(rowId);
+                }
+
+                //一共有12列
+                for(int colId=0;colId<12;colId++){
+
+                    if((xSheet.getRow(rowId)).getCell(colId)==null){
+                        (xSheet.getRow(rowId)).createCell(colId);
+                    }
+
+                    if(colId==0){
+                        if((xSheet.getRow(rowId)).getCell(colId)!=null){
+                            (xSheet.getRow(rowId)).getCell(colId).setCellValue(count);
+                        }
+                    }else if(colId==1){
+                        if((xSheet.getRow(rowId)).getCell(colId)!=null){
+                            (xSheet.getRow(rowId)).getCell(colId).setCellValue(table3s.get(count-1).getCol1());
+                        }
+                    }else if(colId==11){
+                        if((xSheet.getRow(rowId)).getCell(colId)!=null){
+                            (xSheet.getRow(rowId)).getCell(colId).setCellValue(table3s.get(count-1).getCol11());
+                        }
+                    }else if(colId==2){
+                        if((xSheet.getRow(rowId)).getCell(colId)!=null){
+                            (xSheet.getRow(rowId)).getCell(colId).setCellValue(table3s.get(count-1).getCol2());
+                        }
+                    }else if(colId==3){
+                        if((xSheet.getRow(rowId)).getCell(colId)!=null){
+                            (xSheet.getRow(rowId)).getCell(colId).setCellValue(table3s.get(count-1).getCol3());
+                        }
+                    }else if(colId==4){
+                        if((xSheet.getRow(rowId)).getCell(colId)!=null){
+                            (xSheet.getRow(rowId)).getCell(colId).setCellValue(table3s.get(count-1).getCol4());
+                        }
+                    }else if(colId==5){
+                        if((xSheet.getRow(rowId)).getCell(colId)!=null){
+                            (xSheet.getRow(rowId)).getCell(colId).setCellValue(table3s.get(count-1).getCol5());
+                        }
+                    }else if(colId==6){
+                        if((xSheet.getRow(rowId)).getCell(colId)!=null){
+                            (xSheet.getRow(rowId)).getCell(colId).setCellValue(table3s.get(count-1).getCol6());
+                        }
+                    }else if(colId==7){
+                        if((xSheet.getRow(rowId)).getCell(colId)!=null){
+                            (xSheet.getRow(rowId)).getCell(colId).setCellValue(table3s.get(count-1).getCol7());
+                        }
+                    }else if(colId==8){
+                        if((xSheet.getRow(rowId)).getCell(colId)!=null){
+                            (xSheet.getRow(rowId)).getCell(colId).setCellValue(table3s.get(count-1).getCol8());
+                        }
+                    }else if(colId==9){
+                        if((xSheet.getRow(rowId)).getCell(colId)!=null){
+                            (xSheet.getRow(rowId)).getCell(colId).setCellValue(table3s.get(count-1).getCol9());
+                        }
+                    }else if(colId==10){
+                        if((xSheet.getRow(rowId)).getCell(colId)!=null){
+                            (xSheet.getRow(rowId)).getCell(colId).setCellValue(table3s.get(count-1).getCol10());
+                        }
+                    }
+
+                }
+
+                ++count;
+
+            }
+
+
+            //生成excel放入该路径下
+            String outPath = System.getProperty("user.dir")+"/src/main/resources/static/download/"+table3s.get(0).getOrgName()+"-"+fileName+"-"+ System.currentTimeMillis()+".xls";
+
+            //前端使用该路径下载
+            String downloadPath = "127.0.0.1:8080/download/"+table3s.get(0).getOrgName()+"-"+fileName+"-"+System.currentTimeMillis()+".xls";
+
+            FileOutputStream out = new FileOutputStream(outPath);
+            xwb.write(out);
+            out.close();
+            return downloadPath;
+
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         return null;
 

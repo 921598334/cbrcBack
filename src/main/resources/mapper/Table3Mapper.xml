@@ -11,30 +11,25 @@
 
 
     <insert id="insert" parameterType="com.cbrc.back.model.Table3">
-        insert into Table3(col1,col2,col3,col4,col5,col6,col7,col8,col9,col10,col11,userid)  values (#{col1},#{col2},#{col3},#{col4},#{col5},#{col6},#{col7},#{col8},#{col9},#{col10},#{col11},#{userid})
+        insert into Table3(col1,col2,col3,col4,col5,col6,col7,col8,col9,col10,col11,date,userid,filetype,taskcompleteid,orgtype)  values (#{col1},#{col2},#{col3},#{col4},#{col5},#{col6},#{col7},#{col8},#{col9},#{col10},#{col11},#{date},#{userid},#{filetype},#{taskcompleteid},#{orgtype})
     </insert>
 
 
 
-    <select id="findByOrgName" parameterType="java.lang.String" resultType="com.cbrc.back.model.Table3">
-        select * from Table3 where orgName= #{orgName} and date &gt;= #{fromData} and date  &lt;=  #{endData} and filetype = #{filetype}
-    </select>
 
+    <select id="query" parameterType="com.cbrc.back.model.Table3" resultType="com.cbrc.back.model.Table3">
 
-
-
-
-
-    <select id="find"  resultType="com.cbrc.back.model.Table3">
         select * from Table3
+
+        <trim prefix="WHERE" prefixOverrides="AND |OR">
+
+            <if test="filetype != null "> AND filetype=#{filetype}</if>
+            <if test="id != null "> AND id=#{id}</if>
+            <if test="orgtype != null "> AND orgtype=#{orgtype}</if>
+
+        </trim>
+
     </select>
-
-
-
-    <select id="findById" parameterType="java.lang.String" resultType="com.cbrc.back.model.Table3">
-        select * from Table3 where id= #{id}
-    </select>
-
 
 
 </mapper>

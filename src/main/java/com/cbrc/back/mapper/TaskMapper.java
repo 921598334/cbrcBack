@@ -27,7 +27,7 @@ public interface TaskMapper {
 
     //根据查询所有任务
 //    @Select("select * from task ")
-    List<Task> find();
+    List<Task> query(Task task);
 
 
 

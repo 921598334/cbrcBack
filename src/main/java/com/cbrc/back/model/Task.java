@@ -16,6 +16,6 @@ public class Task {
     private String orgtype;
     private Integer userid;
     private String createtime;
-
+    private String period;
 
 }
