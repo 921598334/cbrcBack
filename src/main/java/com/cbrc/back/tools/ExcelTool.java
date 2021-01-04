@@ -4,8 +4,10 @@ import com.cbrc.back.mapper.TableStructMapper;
 import com.cbrc.back.model.Table1;
 import com.cbrc.back.model.Table3;
 import com.cbrc.back.model.TableStruct;
+import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.CellCopyPolicy;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -372,21 +374,50 @@ public class ExcelTool {
             HSSFSheet xSheet = xwb.getSheetAt(0);  //获取excel表的第一个sheet
 
 
-            //需要技术是否需要移动最后行
-            //14与15行需要移动
+
+            //得到统计区间，填表人，电话，机构负责人，机构全程等信息
+            String period = "统计区间："+table3s.get(0).getDate().split("-")[0]+"年 "+ table3s.get(0).getPeriod()+"季度";
+            String user ="填表人："+table3s.get(0).getUserName()+"                            "+"联系电话："+table3s.get(0).getTel();
+            String manager = table3s.get(0).getManager();
+            String orgName = table3s.get(0).getOrgName();
+
+
+
+            //得到关键点的坐标位置
+            int jigouquanchenRow = 2;
+            int jigouquanchenCol = 2;
+
+            int jigoufuzerenRow = 3;
+            int jigoufuzerenCol = 2;
+
+            int tongjiqujianRow = 3;
+            int tongjiqujianCol = 6;
+
+            //在不越界情况下是第14行
+            int tianbiaorenRow = 13;
+            int tianbiaorenCol = 7;
+
+
+
+            //需要计算是否需要移动最后行
+            //从14行开始需要移动
             //默认可以插入7条数据，如果超过7条需要移动
             if(table3s.size()>7){
                 //需要移动几行
                 int moveRow = table3s.size()-7;
 
                 //从下标13开移动
-                xSheet.shiftRows(13, moveRow+13,2,true,false);
+                xSheet.shiftRows(13, xSheet.getLastRowNum(),moveRow,true,false);
 
+                //重新设置填表人的坐标
+                tianbiaorenRow += moveRow;
             }
 
 
-
-
+            //得到默认的ColStyle
+            HSSFCellStyle colStyle = xSheet.getRow(7).getCell(0).getCellStyle();
+            //得到默认的行高
+            short height = xSheet.getRow(7).getHeight();
 
 
 
@@ -399,11 +430,14 @@ public class ExcelTool {
                     xSheet.createRow(rowId);
                 }
 
+                xSheet.getRow(rowId).setHeight(height);
+
+
                 //一共有12列
                 for(int colId=0;colId<12;colId++){
 
                     if((xSheet.getRow(rowId)).getCell(colId)==null){
-                        (xSheet.getRow(rowId)).createCell(colId);
+                        (xSheet.getRow(rowId)).createCell(colId).setCellStyle(colStyle);
                     }
 
                     if(colId==0){
@@ -459,8 +493,17 @@ public class ExcelTool {
                 }
 
                 ++count;
-
             }
+
+
+
+            //设置机构名称等信息
+            (xSheet.getRow(jigoufuzerenRow)).getCell(jigoufuzerenCol).setCellValue(manager);
+            (xSheet.getRow(jigouquanchenRow)).getCell(jigouquanchenCol).setCellValue(orgName);
+            (xSheet.getRow(tongjiqujianRow)).getCell(tongjiqujianCol).setCellValue(period);
+            (xSheet.getRow(tianbiaorenRow)).getCell(tianbiaorenCol).setCellValue(user);
+
+
 
 
             //生成excel放入该路径下
