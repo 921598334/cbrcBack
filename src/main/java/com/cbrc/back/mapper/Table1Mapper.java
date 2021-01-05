@@ -24,6 +24,8 @@ public interface Table1Mapper {
     Table1 collectFind(List<String> taskCompleteListId);
 
 
+    void deleteByTaskCompleteId(String taskcompleteid);
+
 }
 
 

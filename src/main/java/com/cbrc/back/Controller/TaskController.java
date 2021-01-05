@@ -35,12 +35,168 @@ public class TaskController {
 
 
 
+    //更新任务，如果选择对机构发送了改变，需要对taskcomplete表进行响应的调整
+    @PostMapping("/update")
+    public Object update(
+            @RequestParam(name="tasktitle",defaultValue="") String fileType,
+            @RequestParam(name="fromdate",defaultValue="") String fromDate,
+            @RequestParam(name="enddate",defaultValue="") String endDate,
+            @RequestParam(name="tasktitle",defaultValue="") String taskTitle,
+            @RequestParam(name="taskDescribe",defaultValue="") String taskDescribe,
+            @RequestParam(name="selectedValue",defaultValue="") String selectedValue,
+            @RequestParam(name="userid",defaultValue="") String userid,
+            @RequestParam(name="period",defaultValue="") String period,
+
+
+            HttpServletRequest request,
+            HttpServletResponse response,
+            Model model) throws Exception {
+
+        System.out.println("update 开始执行============================");
+
+        //把数据存储在数据库中
+        Task task = new Task();
+
+        task.setFiletype(fileType);
+        task.setFromdate(fromDate);
+        task.setEnddate(endDate);
+        task.setTasktitle(taskTitle);
+        task.setTaskdescribe(taskDescribe);
+        task.setUserid(Integer.parseInt(userid) );
+        task.setCreatetime(dateformat.format(System.currentTimeMillis()));
+        //还需要选择该任务是那一年第几季度的任务
+        String[] periodTmp = period.split("-");
+        if(periodTmp[1].equals("01")){
+            period = periodTmp[0]+"年第1季度";
+        }else if(periodTmp[1].equals("04")){
+            period = periodTmp[0]+"年第2季度";
+        }else if(periodTmp[1].equals("07")){
+            period = periodTmp[0]+"年第3季度";
+        }else if(periodTmp[1].equals("10")){
+            period = periodTmp[0]+"年第4季度";
+        }
+
+        task.setPeriod(period.substring(1));
+
+
+        //selectedValue得到的是map类型，需要转换为list
+        List<String> selectedValueList = new ArrayList<>();
+        Map maps  = (Map)JSON.parse(selectedValue);
+        for(int i=0;i<maps.size();i++) {
+            String tmp = maps.get(i + "")+"";
+            selectedValueList.add(tmp);
+        }
+
+        String str = JSON.toJSONString(selectedValueList);
+
+        task.setOrgtype(str);
+
+
+        try{
+            taskService.insert(task);
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+
+        //数据插入后生成taskcomplete表
+        for(int i=0;i<selectedValueList.size();i++){
+            TaskComplete taskComplete = new TaskComplete();
+            taskComplete.setIscomplete(0);
+            taskComplete.setTaskid(task.getId());
+            taskComplete.setOrgid(selectedValueList.get(i));
+            taskCompleteService.insert(taskComplete);
+        }
+
+        return  null;
+
+    }
+
+
+
+
+
+
+
+
+    //查询任务细节（更新用）
+    @PostMapping("/queryTaskDetail")
+    public Object queryTaskDetail(
+            @RequestParam(name="id",defaultValue="") String id,
+            HttpServletRequest request,
+            HttpServletResponse response,
+            Model model) throws Exception {
+
+        System.out.println("queryTaskDetail 开始执行============================");
+
+        Task taskTmp = new Task();
+        taskTmp.setId(Integer.parseInt(id));
+
+        Task queryTask = taskService.query(taskTmp).get(0);
+
+
+        String completeTime = queryTask.getPeriod();
+        //季度数据要拼凑为2021-Q1这种样式
+        String completeTimeTmp = "";
+        String[] completeTimeTmpArr = completeTime.split("年");
+
+        completeTimeTmp = completeTimeTmpArr[0];
+
+        if(completeTimeTmpArr[1].contains("1")){
+            completeTimeTmp+="-01-01";
+        }else if(completeTimeTmpArr[1].contains("2")){
+            completeTimeTmp+="-04-01";
+        }else if(completeTimeTmpArr[1].contains("3")){
+            completeTimeTmp+="-07-01";
+        }else if(completeTimeTmpArr[1].contains("4")){
+            completeTimeTmp+="-10-01";
+        }
+
+        queryTask.setPeriod(completeTimeTmp);
+
+
+        return queryTask;
+    }
+
+
+
+
+
+
+    //删除任务
+    @PostMapping("/deleteTask")
+    public Object deleteTask(
+            @RequestParam(name="id",defaultValue="") String id,
+            HttpServletRequest request,
+            HttpServletResponse response,
+            Model model) throws Exception {
+
+        System.out.println("deleteTask 开始执行============================");
+
+
+
+        taskService.delete(id);
+
+        return null;
+    }
+
+
+
+
+
+
+
+
+
+
     //获取所有机构类型与其下的机构
     @PostMapping("/getOrg")
     public Object getOrg(
-                          HttpServletRequest request,
-                          HttpServletResponse response,
-                          Model model) throws Exception {
+
+              HttpServletRequest request,
+              HttpServletResponse response,
+              Model model) throws Exception {
 
         System.out.println("getOrg开始执行============================");
 
@@ -138,7 +294,7 @@ public class TaskController {
 
 
 
-    //管理员查询已经发布的任务
+    //管理员查询已经发布的任务列表
     @PostMapping("/queryTask")
     public Object queryTask(
             @RequestParam(name="taskid",defaultValue="") String taskid,

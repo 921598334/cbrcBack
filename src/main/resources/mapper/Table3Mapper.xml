@@ -47,4 +47,12 @@
     </select>
 
 
+
+
+
+    <delete id="deleteByTaskCompleteId"  parameterType="java.lang.String">
+        delete from table3 where taskcompleteid=#{taskcompleteid}
+    </delete>
+
+
 </mapper>

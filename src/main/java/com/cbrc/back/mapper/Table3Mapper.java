@@ -25,6 +25,7 @@ public interface Table3Mapper {
 
     List<Table3> collectFind(List<String> taskCompleteListId);
 
+    void deleteByTaskCompleteId(String taskcompleteid);
 
 }
 
