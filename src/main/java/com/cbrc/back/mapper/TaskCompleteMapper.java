@@ -24,6 +24,8 @@ public interface TaskCompleteMapper {
 
     void deleteByTaskId(String id);
 
+    void deleteById(String id);
+
 }
 
 

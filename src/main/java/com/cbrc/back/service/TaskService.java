@@ -45,7 +45,6 @@ public class TaskService {
 
     //删除任务时，还需要删除taskcomplete，以及table1，table3
     public void delete(String id){
-
         //首先删除任务
         taskMapper.delete(id);
 
@@ -62,14 +61,18 @@ public class TaskService {
 
         //然后删除taskComplete，根据task的id
         taskCompleteMapper.deleteByTaskId(id);
-
-
-
-
-
     }
 
 
+
+
+
+
+
+
+    public void update(Task task){
+        taskMapper.update(task);
+    }
 
 
 }

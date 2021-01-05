@@ -68,6 +68,9 @@
     </delete>
 
 
+    <delete id="deleteById"  parameterType="java.lang.String">
+        delete from taskcomplete where id=#{id}
+    </delete>
 
 
 

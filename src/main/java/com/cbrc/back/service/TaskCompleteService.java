@@ -1,6 +1,8 @@
 package com.cbrc.back.service;
 
 
+import com.cbrc.back.mapper.Table1Mapper;
+import com.cbrc.back.mapper.Table3Mapper;
 import com.cbrc.back.mapper.TaskCompleteMapper;
 import com.cbrc.back.mapper.TaskMapper;
 import com.cbrc.back.model.Task;
@@ -14,7 +16,11 @@ import java.util.List;
 @Service
 public class TaskCompleteService {
 
+    @Autowired
+    Table1Mapper table1Mapper;
 
+    @Autowired
+    Table3Mapper table3Mapper;
 
     @Autowired
     TaskCompleteMapper taskCompleteMapper;
@@ -132,6 +138,24 @@ public class TaskCompleteService {
     }
 
 
+
+
+
+
+    //删除任务时，还需要删除table1，table3
+    public void delete(TaskComplete taskComplete){
+        //首先查询要删除的任务信息
+        List<TaskComplete> deleteTaskCompletes = taskCompleteMapper.query(taskComplete);
+
+        for(TaskComplete deleteTaskComplete:deleteTaskCompletes){
+
+            //删除该deleteTaskComplete下的table1和table3
+            table1Mapper.deleteByTaskCompleteId(deleteTaskComplete.getId()+"");
+            table3Mapper.deleteByTaskCompleteId(deleteTaskComplete.getId()+"");
+            //最后删除该taskComplete
+            taskCompleteMapper.deleteById(deleteTaskComplete.getId()+"");
+        }
+    }
 
 
 }

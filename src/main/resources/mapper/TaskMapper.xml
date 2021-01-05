@@ -53,4 +53,45 @@
 
 
 
+
+
+    <update id="update"  parameterType="com.cbrc.back.model.Task">
+
+        update  task
+        <trim prefix="set" suffixOverrides=",">
+            <if test="tasktitle != null ">
+                tasktitle=#{tasktitle},
+            </if>
+            <if test="taskdescribe != null ">
+                taskdescribe=#{taskdescribe},
+            </if>
+            <if test="fromdate != null ">
+                fromdate=#{fromdate},
+            </if>
+            <if test="enddate != null ">
+                enddate=#{enddate},
+            </if>
+            <if test="filetype != null ">
+                filetype=#{filetype},
+            </if>
+            <if test="orgtype != null ">
+                orgtype=#{orgtype},
+            </if>
+            <if test="userid != null ">
+                userid=#{userid},
+            </if>
+            <if test="createtime != null ">
+                createtime=#{createtime},
+            </if>
+            <if test="period != null ">
+                period=#{period}
+            </if>
+
+        </trim>
+        where id=#{id}
+
+    </update>
+
+
+
 </mapper>

@@ -25,6 +25,9 @@ public interface TaskMapper {
 
     void delete(String id);
 
+
+
+    void update(Task task);
 }
 
 

@@ -6,6 +6,7 @@ import com.cbrc.back.model.*;
 import com.cbrc.back.service.OrgTypeService;
 import com.cbrc.back.service.TaskCompleteService;
 import com.cbrc.back.service.TaskService;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -38,7 +39,8 @@ public class TaskController {
     //更新任务，如果选择对机构发送了改变，需要对taskcomplete表进行响应的调整
     @PostMapping("/update")
     public Object update(
-            @RequestParam(name="tasktitle",defaultValue="") String fileType,
+            @RequestParam(name="id",defaultValue="") String id,
+            @RequestParam(name="filetype",defaultValue="") String fileType,
             @RequestParam(name="fromdate",defaultValue="") String fromDate,
             @RequestParam(name="enddate",defaultValue="") String endDate,
             @RequestParam(name="tasktitle",defaultValue="") String taskTitle,
@@ -54,16 +56,66 @@ public class TaskController {
 
         System.out.println("update 开始执行============================");
 
+
+
+
+        //根据id查询之前的任务
+        Task taskTmp = new Task();
+        taskTmp.setId(Integer.parseInt(id));
+        Task oldTask  = taskService.query(taskTmp).get(0);
+        String oldSelectValueString = oldTask.getOrgtype();
+        List<String> oldSelectedValueList = JSON.parseArray(oldSelectValueString,String.class);
+
+
+
+        //把最新上传的机构类型也转化为list
+        //selectedValue得到的是map类型，需要转换为list
+        List<String> selectedValueList = new ArrayList<>();
+        Map maps  = (Map)JSON.parse(selectedValue);
+        for(int i=0;i<maps.size();i++) {
+            String tmp = maps.get(i + "")+"";
+            selectedValueList.add(tmp);
+        }
+
+
+        //在新集合中不存在的（也就是需要删除的）
+        Object[] deleteArr = CollectionUtils.subtract(oldSelectedValueList, selectedValueList).toArray();
+        //旧集合中不存在（需要添加的）
+        Object[] addArr = CollectionUtils.subtract(selectedValueList,oldSelectedValueList).toArray();
+
+        //该任务中需要删除的机构
+        for(Object deleteEle:deleteArr){
+            //首先在 taskcomplete 表中根据testid与orgid找到taskcomplete的id，然后在table1与table3中进行删除，再删除taskcomplete
+            TaskComplete taskComplete = new TaskComplete();
+            taskComplete.setTaskid(Integer.parseInt(id));
+            taskComplete.setOrgid(deleteEle+"");
+            taskCompleteService.delete(taskComplete);
+        }
+
+        //该任务需要添加的机构，
+        for(Object addEle:addArr){
+            //首先在 taskcomplete 表中进行添加
+
+            TaskComplete taskComplete = new TaskComplete();
+            taskComplete.setIscomplete(0);
+            taskComplete.setTaskid(Integer.parseInt(id));
+            taskComplete.setOrgid(addEle+"");
+            taskCompleteService.insert(taskComplete);
+        }
+
+
+        //完成上述操作后把最新的数据更新到task中
+
         //把数据存储在数据库中
         Task task = new Task();
-
+        task.setId(Integer.parseInt(id));
         task.setFiletype(fileType);
         task.setFromdate(fromDate);
         task.setEnddate(endDate);
         task.setTasktitle(taskTitle);
         task.setTaskdescribe(taskDescribe);
-        task.setUserid(Integer.parseInt(userid) );
-        task.setCreatetime(dateformat.format(System.currentTimeMillis()));
+//        task.setUserid(Integer.parseInt(userid) );
+//        task.setCreatetime(dateformat.format(System.currentTimeMillis()));
         //还需要选择该任务是那一年第几季度的任务
         String[] periodTmp = period.split("-");
         if(periodTmp[1].equals("01")){
@@ -76,38 +128,30 @@ public class TaskController {
             period = periodTmp[0]+"年第4季度";
         }
 
-        task.setPeriod(period.substring(1));
+        if(period.contains("\"")){
+            task.setPeriod(period.substring(1));
+        }else
+        {
+            task.setPeriod(period);
+        }
+
+
 
 
         //selectedValue得到的是map类型，需要转换为list
-        List<String> selectedValueList = new ArrayList<>();
-        Map maps  = (Map)JSON.parse(selectedValue);
-        for(int i=0;i<maps.size();i++) {
-            String tmp = maps.get(i + "")+"";
-            selectedValueList.add(tmp);
-        }
-
         String str = JSON.toJSONString(selectedValueList);
 
         task.setOrgtype(str);
 
 
         try{
-            taskService.insert(task);
+            taskService.update(task);
 
         }catch (Exception e){
             e.printStackTrace();
         }
 
 
-        //数据插入后生成taskcomplete表
-        for(int i=0;i<selectedValueList.size();i++){
-            TaskComplete taskComplete = new TaskComplete();
-            taskComplete.setIscomplete(0);
-            taskComplete.setTaskid(task.getId());
-            taskComplete.setOrgid(selectedValueList.get(i));
-            taskCompleteService.insert(taskComplete);
-        }
 
         return  null;
 
