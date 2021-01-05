@@ -35,11 +35,6 @@ public class TaskController {
 
 
 
-
-
-
-
-
     //获取所有机构类型与其下的机构
     @PostMapping("/getOrg")
     public Object getOrg(
@@ -90,7 +85,18 @@ public class TaskController {
         task.setUserid(Integer.parseInt(userid) );
         task.setCreatetime(dateformat.format(System.currentTimeMillis()));
         //还需要选择该任务是那一年第几季度的任务
-        task.setPeriod(period);
+        String[] periodTmp = period.split("-");
+        if(periodTmp[1].equals("01")){
+            period = periodTmp[0]+"年第1季度";
+        }else if(periodTmp[1].equals("04")){
+            period = periodTmp[0]+"年第2季度";
+        }else if(periodTmp[1].equals("07")){
+            period = periodTmp[0]+"年第3季度";
+        }else if(periodTmp[1].equals("10")){
+            period = periodTmp[0]+"年第4季度";
+        }
+
+        task.setPeriod(period.substring(1));
 
 
         //selectedValue得到的是map类型，需要转换为list
@@ -195,7 +201,7 @@ public class TaskController {
 
 
 
-    //用户查询自己需要完成的任务
+    //用户查询自己需要完成的任务,用户查询任务是根据任务的创建时间来查询
     @PostMapping("/queryTaskComplete")
     public Object queryTaskComplete(
 
@@ -264,7 +270,7 @@ public class TaskController {
         taskComplete.setIscomplete(Integer.parseInt(taskStatus) );
 
         try{
-            List<TaskComplete> taskCompletes = taskCompleteService.query(taskComplete,fromDate,endDate);
+            List<TaskComplete> taskCompletes = taskCompleteService.queryByCreateTime(taskComplete,fromDate,endDate);
 
             return  taskCompletes;
         }catch (Exception e){
@@ -273,19 +279,6 @@ public class TaskController {
         }
 
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

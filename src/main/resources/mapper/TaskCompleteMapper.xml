@@ -30,7 +30,7 @@
 
             <if test="userid != null "> AND userid=#{userid}</if>
 
-            <if test="orgid != null  "> AND orgid=#{orgid}</if>
+            <if test="orgid != null  "> AND orgid like #{orgid}</if>
         </trim>
     </select>
 

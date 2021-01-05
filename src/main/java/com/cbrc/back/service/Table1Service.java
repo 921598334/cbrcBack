@@ -45,14 +45,15 @@ public class Table1Service {
 
 
 
-    //数据插入成功后，需要更新tableconplete的完成状态以及完成人，完成时间
+
     public void insert(Table1 table1,String userid,String taskCompleteId){
         table1Mapper.insert(table1);
 
+        //数据插入成功后，需要更新tableconplete的完成状态以及完成人，完成时间
         TaskComplete taskCompleteTmp = new TaskComplete();
         taskCompleteTmp.setId(Integer.parseInt(taskCompleteId));
         taskCompleteTmp.setUserid(Integer.parseInt(userid) );
-        taskCompleteTmp.setCompletetime(dateformat.format(System.currentTimeMillis()));
+        taskCompleteTmp.setCompletetime(table1.getDate());
         taskCompleteTmp.setIscomplete(1);
 
         taskCompleteService.update(taskCompleteTmp);
@@ -72,25 +73,25 @@ public class Table1Service {
             if(table1Tmp.getDate().compareTo(fromDate)>=0 && table1Tmp.getDate().compareTo(endDate)<=0){
 
                 //查询管理机构名称,管理员姓名,填表人姓名，填表人电话
-                Userinfo userinfo = userinfoService.findById(table1Tmp.getUserid());
-                OrgInfo orgInfoTmp = new OrgInfo();
-                orgInfoTmp.setOrgid(userinfo.getOrgid());
-                OrgInfo orgInfo = orgInfoService.query(orgInfoTmp).get(0);
-                table1Tmp.setOrgName(orgInfo.getOrgname());
-                table1Tmp.setManager(orgInfo.getManager());
-                table1Tmp.setUserName(userinfo.getUsername());
-                table1Tmp.setTel(userinfo.getTelphone());
-
-
-                //查询任务标题
-                TaskComplete taskCompleteTmp = new TaskComplete();
-                taskCompleteTmp.setId(table1Tmp.getTaskcompleteid());
-                Integer taskId = taskCompleteMapper.query(taskCompleteTmp).get(0).getTaskid();
-                Task taskTmp = new Task();
-                taskTmp.setId(taskId);
-                Task task = taskService.query(taskTmp).get(0);
-                table1Tmp.setTaskTitle(task.getTasktitle());
-                table1Tmp.setPeriod(task.getPeriod());
+//                Userinfo userinfo = userinfoService.findById(table1Tmp.getUserid());
+//                OrgInfo orgInfoTmp = new OrgInfo();
+//                orgInfoTmp.setOrgid(userinfo.getOrgid());
+//                OrgInfo orgInfo = orgInfoService.query(orgInfoTmp).get(0);
+//                table1Tmp.setOrgName(orgInfo.getOrgname());
+//                table1Tmp.setManager(orgInfo.getManager());
+//                table1Tmp.setUserName(userinfo.getUsername());
+//                table1Tmp.setTel(userinfo.getTelphone());
+//
+//
+//                //查询任务标题
+//                TaskComplete taskCompleteTmp = new TaskComplete();
+//                taskCompleteTmp.setId(table1Tmp.getTaskcompleteid());
+//                Integer taskId = taskCompleteMapper.query(taskCompleteTmp).get(0).getTaskid();
+//                Task taskTmp = new Task();
+//                taskTmp.setId(taskId);
+//                Task task = taskService.query(taskTmp).get(0);
+//                table1Tmp.setTaskTitle(task.getTasktitle());
+//                table1Tmp.setPeriod(task.getPeriod());
 
 
                 //查询管理者名称
@@ -106,14 +107,22 @@ public class Table1Service {
 
 
 
-    Table1 collectFind(   String fromData,  String endData){
-        return table1Mapper.collectFind(fromData,endData);
+
+    //基础查询
+    public List<Table1> query(Table1 table1){
+        //查询到某个文件类型、某个机构类型的数据，在table1表中
+        List<Table1> table1List = table1Mapper.query(table1);
+
+        return table1List;
+
     }
 
 
-    Table1 collectFindByOrg(  String orgName,   String fromData,  String endData){
-        return table1Mapper.collectFindByOrg(orgName,fromData,endData);
+    //基于List<TaskComplete>的id属性，在table1表中查询taskcompleteid中的数据
+    public Table1 collectFind(List<String> taskCompleteListId){
+        return table1Mapper.collectFind(taskCompleteListId);
     }
+
 
 
 

@@ -28,6 +28,8 @@
 
             <if test="id != null "> AND id=#{id}</if>
             <if test="tasktitle != null "> AND tasktitle=#{tasktitle}</if>
+            <if test="filetype != null "> AND filetype=#{filetype}</if>
+            <if test="orgtype != null "> AND orgtype like #{orgtype}</if>
 
             <!--<if test="fromDate != null "> AND createtime &gt;= #{fromDate} AND createtime &lt;= #{endDate}</if>-->
 

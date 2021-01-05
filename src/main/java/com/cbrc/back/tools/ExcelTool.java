@@ -29,26 +29,24 @@ public class ExcelTool {
 
     //templateId:模版索引
     //value:需要填充的直，其按照key，value存储，
-    public String writeExcelPOI1(Table1 table1,HttpServletResponse response) {
+    public String writeExcelPOI1(Table1 table1,boolean isCollect,String fileType,String manager,String orgName,String period,String user,String tel) {
         try {
 
             String fileName = "";
 
-
-            if(table1.getFiletype().equals("1")){
+            if(fileType.equals("1")){
                 fileName = "附件1：专业代理、经纪用表（2020修订版）.XLS";
-            }else if(table1.getFiletype().equals("2")){
+            }else if(fileType.equals("2")){
                 fileName = "附件2：公估机构用表.xls";
-            }else if(table1.getFiletype().equals("3")){
+            }else if(fileType.equals("3")){
                 fileName = "附件3：合作销售寿险公司产品统计表.xls";
-            }else if(table1.getFiletype().equals("4")){
+            }else if(fileType.equals("4")){
                 fileName = "附件4：银邮代理机构用表（2020年3月修订版）.XLS";
             }
 
 
 
             String fullPath = System.getProperty("user.dir")+"/src/main/resources/static/template/"+fileName;
-
 
 
 
@@ -61,7 +59,7 @@ public class ExcelTool {
 
 
             //查询查询需要填充的值
-            ArrayList<TableStruct> tableStructs = tableStructMapper.findByRepIdExcludeMark(table1.getFiletype());
+            ArrayList<TableStruct> tableStructs = tableStructMapper.findByRepIdExcludeMark(fileType);
 
             for(int i=0;i<tableStructs.size();i++){
 
@@ -299,54 +297,75 @@ public class ExcelTool {
                     }
 
                 }else{
-
                     String cellValue = "";
 
-                    if(item.contains("负责人")){
-                        cellValue = table1.getManager();
-                        if((xSheet.getRow(rowId-1)).getCell(colId-1)!=null){
-                            (xSheet.getRow(rowId-1)).getCell(colId-1).setCellValue(cellValue);
-                        }
-                    }
-
                     if(item.contains("机构全称")){
-                        cellValue = table1.getOrgName();
+                        cellValue = orgName;
                         if((xSheet.getRow(rowId-1)).getCell(colId)!=null){
                             (xSheet.getRow(rowId-1)).getCell(colId).setCellValue(cellValue);
                         }
                     }
 
-                    if(item.contains("填表人")){
-                        cellValue = "填表人："+table1.getUserName()+"                            "+"联系电话："+table1.getTel();
+                    if(item.contains("统计区间")){
+                        cellValue = "统计区间："+period;
                         if((xSheet.getRow(rowId-1)).getCell(colId-1)!=null){
                             (xSheet.getRow(rowId-1)).getCell(colId-1).setCellValue(cellValue);
                         }
                     }
 
-                    if(item.contains("统计区间")){
-                        cellValue = "统计区间："+table1.getDate().split("-")[0]+"年 "+ table1.getPeriod()+"季度";
-                        if((xSheet.getRow(rowId-1)).getCell(colId-1)!=null){
-                            (xSheet.getRow(rowId-1)).getCell(colId-1).setCellValue(cellValue);
+
+
+                    //如果是汇总表，则不需要填入这些信息
+                    if(!isCollect){
+
+
+                        if(item.contains("负责人")){
+                            cellValue = manager;
+                            if((xSheet.getRow(rowId-1)).getCell(colId-1)!=null){
+                                (xSheet.getRow(rowId-1)).getCell(colId-1).setCellValue(cellValue);
+                            }
                         }
+
+
+
+                        if(item.contains("填表人")){
+                            cellValue = "填表人："+user+"                            "+"联系电话："+tel;
+                            if((xSheet.getRow(rowId-1)).getCell(colId-1)!=null){
+                                (xSheet.getRow(rowId-1)).getCell(colId-1).setCellValue(cellValue);
+                            }
+                        }
+
+
                     }
 
                 }
 
-
             }
 
 
-            //生成excel放入该路径下
-            String outPath = System.getProperty("user.dir")+"/src/main/resources/static/download/"+table1.getOrgName()+"-"+fileName+"-"+ System.currentTimeMillis()+".xls";
+            String outPath ="";
+            String downloadPath="";
 
-            //前端使用该路径下载
-            String downloadPath = "127.0.0.1:8080/download/"+table1.getOrgName()+"-"+fileName+"-"+System.currentTimeMillis()+".xls";
+            if(isCollect){
+
+                //生成excel放入该路径下
+                outPath = System.getProperty("user.dir")+"/src/main/resources/static/download/"+"汇总表—"+orgName+"-"+period+"-"+fileName+"-"+ System.currentTimeMillis()+".xls";
+                //前端使用该路径下载
+                downloadPath = "127.0.0.1:8080/download/"+"汇总表—"+orgName+"-"+period+"-"+fileName+"-"+System.currentTimeMillis()+".xls";
+
+
+            }else{
+                //生成excel放入该路径下
+                outPath = System.getProperty("user.dir")+"/src/main/resources/static/download/"+orgName+"-"+period+"-"+fileName+"-"+ System.currentTimeMillis()+".xls";
+                //前端使用该路径下载
+                downloadPath = "127.0.0.1:8080/download/"+orgName+"-"+period+"-"+fileName+"-"+System.currentTimeMillis()+".xls";
+
+            }
 
             FileOutputStream out = new FileOutputStream(outPath);
             xwb.write(out);
             out.close();
             return downloadPath;
-
 
 
         } catch (Exception e) {
@@ -358,7 +377,18 @@ public class ExcelTool {
 
 
 
-    public String writeExcelPOI3(List<Table3> table3s, HttpServletResponse response) {
+
+
+
+
+
+
+
+
+
+
+
+    public String writeExcelPOI3(List<Table3> table3s,boolean isCollect,String fileType,String manager,String orgName,String period,String user,String tel) {
 
         try {
 
@@ -375,14 +405,7 @@ public class ExcelTool {
 
 
 
-            //得到统计区间，填表人，电话，机构负责人，机构全程等信息
-            String period = "统计区间："+table3s.get(0).getDate().split("-")[0]+"年 "+ table3s.get(0).getPeriod()+"季度";
-            String user ="填表人："+table3s.get(0).getUserName()+"                            "+"联系电话："+table3s.get(0).getTel();
-            String manager = table3s.get(0).getManager();
-            String orgName = table3s.get(0).getOrgName();
-
-
-
+            //这些信息在汇总数据下载中没用
             //得到关键点的坐标位置
             int jigouquanchenRow = 2;
             int jigouquanchenCol = 2;
@@ -408,6 +431,7 @@ public class ExcelTool {
 
                 //从下标13开移动
                 xSheet.shiftRows(13, xSheet.getLastRowNum(),moveRow,true,false);
+
 
                 //重新设置填表人的坐标
                 tianbiaorenRow += moveRow;
@@ -496,21 +520,51 @@ public class ExcelTool {
             }
 
 
+            String periodTmp = "统计区间："+period;
+            String orgNameTmp = orgName;
+            (xSheet.getRow(jigouquanchenRow)).getCell(jigouquanchenCol).setCellValue(orgNameTmp);
+            (xSheet.getRow(tongjiqujianRow)).getCell(tongjiqujianCol).setCellValue(periodTmp);
 
-            //设置机构名称等信息
-            (xSheet.getRow(jigoufuzerenRow)).getCell(jigoufuzerenCol).setCellValue(manager);
-            (xSheet.getRow(jigouquanchenRow)).getCell(jigouquanchenCol).setCellValue(orgName);
-            (xSheet.getRow(tongjiqujianRow)).getCell(tongjiqujianCol).setCellValue(period);
-            (xSheet.getRow(tianbiaorenRow)).getCell(tianbiaorenCol).setCellValue(user);
-
-
+            if(!isCollect){
 
 
-            //生成excel放入该路径下
-            String outPath = System.getProperty("user.dir")+"/src/main/resources/static/download/"+table3s.get(0).getOrgName()+"-"+fileName+"-"+ System.currentTimeMillis()+".xls";
+                String userTmp ="填表人："+user+"                            "+"联系电话："+tel;
+                String managerTmp = manager;
 
-            //前端使用该路径下载
-            String downloadPath = "127.0.0.1:8080/download/"+table3s.get(0).getOrgName()+"-"+fileName+"-"+System.currentTimeMillis()+".xls";
+                //设置机构名称等信息
+                (xSheet.getRow(jigoufuzerenRow)).getCell(jigoufuzerenCol).setCellValue(managerTmp);
+
+                (xSheet.getRow(tianbiaorenRow)).getCell(tianbiaorenCol).setCellValue(userTmp);
+            }
+
+
+            String outPath = null;
+            String downloadPath = null;
+
+            if(isCollect){
+//                //生成excel放入该路径下
+//                outPath = System.getProperty("user.dir")+"/src/main/resources/static/download/"+"汇总表"+"-"+fileName+"-"+ System.currentTimeMillis()+".xls";
+//
+//                //前端使用该路径下载
+//                downloadPath = "127.0.0.1:8080/download/"+"汇总表"+"-"+fileName+"-"+System.currentTimeMillis()+".xls";
+
+                //生成excel放入该路径下
+                outPath = System.getProperty("user.dir")+"/src/main/resources/static/download/"+"汇总表—"+orgName+"-"+period+"-"+fileName+"-"+ System.currentTimeMillis()+".xls";
+                //前端使用该路径下载
+                downloadPath = "127.0.0.1:8080/download/"+"汇总表—"+orgName+"-"+period+"-"+fileName+"-"+System.currentTimeMillis()+".xls";
+
+
+            }else {
+                //生成excel放入该路径下
+                outPath = System.getProperty("user.dir")+"/src/main/resources/static/download/"+orgName+"-"+period+"-"+fileName+"-"+ System.currentTimeMillis()+".xls";
+                //前端使用该路径下载
+                downloadPath = "127.0.0.1:8080/download/"+orgName+"-"+period+"-"+fileName+"-"+System.currentTimeMillis()+".xls";
+
+            }
+
+
+
+
 
             FileOutputStream out = new FileOutputStream(outPath);
             xwb.write(out);

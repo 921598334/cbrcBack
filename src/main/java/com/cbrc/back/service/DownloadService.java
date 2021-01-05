@@ -18,17 +18,17 @@ public class DownloadService {
     @Autowired
     ExcelTool excelTool;
 
-    public String downloadExcel1(Table1 table1,HttpServletResponse response){
+    public String downloadExcel1(Table1 table1,boolean isCollect,String fileType,String manager,String orgName,String period,String user,String tel){
 
 
-        return excelTool.writeExcelPOI1(table1,response);
+        return excelTool.writeExcelPOI1(table1,isCollect,fileType,manager,orgName,period,user,tel);
 
     }
 
-    public String downloadExcel3(List<Table3> table3s, HttpServletResponse response){
+    public String downloadExcel3(List<Table3> table3s,boolean isCollect,String fileType,String manager,String orgName,String period,String user,String tel){
 
 
-        return excelTool.writeExcelPOI3(table3s,response);
+        return excelTool.writeExcelPOI3(table3s,isCollect,fileType,manager,orgName,period,user,tel);
 
     }
 

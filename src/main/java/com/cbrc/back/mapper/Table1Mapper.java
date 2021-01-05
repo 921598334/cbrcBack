@@ -2,6 +2,7 @@ package com.cbrc.back.mapper;
 
 
 import com.cbrc.back.model.Table1;
+import com.cbrc.back.model.TaskComplete;
 import com.cbrc.back.model.Userinfo;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
@@ -20,10 +21,8 @@ public interface Table1Mapper {
 
     List<Table1> query(Table1 table1);
 
-    Table1 collectFind( @Param("fromData") String fromData, @Param("endData") String endData);
+    Table1 collectFind(List<String> taskCompleteListId);
 
-
-    Table1 collectFindByOrg(@Param("orgName") String orgName,@Param("fromData") String fromData, @Param("endData") String endData);
 
 }
 

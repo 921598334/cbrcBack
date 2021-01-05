@@ -48,6 +48,8 @@ public class UploadController {
 
     Calendar now = Calendar.getInstance();
 
+
+    //用户上传数据
     @PostMapping("/upload")
     public Object upload(@RequestParam(name="dataSourceTmp",defaultValue="") String uploadInfoStr,
                          @RequestParam(name="orgid",defaultValue="") String orgid,
@@ -356,7 +358,6 @@ public class UploadController {
             try{
 
                 table1Service.insert(table1,userid,taskCompleteId);
-
 
 
             }catch (Exception e){

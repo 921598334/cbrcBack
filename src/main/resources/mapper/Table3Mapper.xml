@@ -26,8 +26,23 @@
             <if test="filetype != null "> AND filetype=#{filetype}</if>
             <if test="id != null "> AND id=#{id}</if>
             <if test="orgtype != null "> AND orgtype=#{orgtype}</if>
+            <if test="taskcompleteid != null "> AND taskcompleteid=#{taskcompleteid}</if>
 
         </trim>
+
+    </select>
+
+
+
+
+
+    <!--根据taskcomplete数组进行查询-->
+    <select id="collectFind"  resultType="com.cbrc.back.model.Table3">
+        select  * from Table3
+        where taskcompleteid IN
+        <foreach collection="list" item="id" index="index" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
 
     </select>
 
