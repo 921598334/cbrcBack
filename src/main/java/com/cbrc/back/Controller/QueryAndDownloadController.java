@@ -64,6 +64,11 @@ public class QueryAndDownloadController {
 
 
 
+
+
+
+
+
     //得到所有机构类型
     @PostMapping("/getOrgType")
     public Object getOrgType(
@@ -157,7 +162,7 @@ public class QueryAndDownloadController {
 
             TaskComplete taskComplete = new TaskComplete();
             //查询任务状态为完成
-            taskComplete.setIscomplete(1);
+            taskComplete.setIscomplete(2);
             taskComplete.setOrgid(orgInfo.getOrgid());
 
             //查询该机构id下已经完成的任务，在规定的时间范围了
@@ -249,7 +254,7 @@ public class QueryAndDownloadController {
 
 
 
-
+    //管理员操作
     //报表某类机构下，一定时间范围，某个文件类型的任务提交记录
     //需要显示机构名称，任务标题，
     @PostMapping("/query")
@@ -258,7 +263,7 @@ public class QueryAndDownloadController {
                          @RequestParam(name="fromDate",defaultValue="") String fromDate,
                          @RequestParam(name="endDate",defaultValue="") String endDate,
                          @RequestParam(name="fileType",defaultValue="") String fileType,
-
+                         @RequestParam(name="taskStatus",defaultValue="") String taskStatus,
 
                           HttpServletRequest request,
                           HttpServletResponse response,
@@ -298,7 +303,7 @@ public class QueryAndDownloadController {
         for(OrgInfo orgInfo:orgTypeTmp.getOrgs()){
 
             TaskComplete taskComplete = new TaskComplete();
-            taskComplete.setIscomplete(1);
+            taskComplete.setIscomplete(Integer.parseInt(taskStatus) );
             taskComplete.setOrgid(orgInfo.getOrgid());
             //查询该机构id下已经完成的任务，在规定的时间范围了
             List<TaskComplete> taskCompleteList = taskCompleteService.queryByCompleteTime(taskComplete,fromDate,endDate);
@@ -322,7 +327,7 @@ public class QueryAndDownloadController {
                     resultMapTmp.put("taskcompleteid", taskCompleteTmp.getId()+"");
                     resultMapTmp.put("orgName",orgInfo.getOrgname() );
                     resultMapTmp.put("period",task1.getPeriod());
-
+                    resultMapTmp.put("iscomplete",taskCompleteTmp.getIscomplete()+"");
                     //其中一个机构已经完成的一个任务
                     resultMap.add(resultMapTmp);
                 }
@@ -336,85 +341,79 @@ public class QueryAndDownloadController {
 
 
 
-
-
-        //根据不同的表名查询不同的表
-//        if(fileType.equals("3")){
-//
-//            //查询思路：
-//            // 首先根据根据orgType查询,得到该类型下的所有机构id（orgid）
-//            // 首先根据完成情况，时间，机构类型查询taskcompete表，
-//            // 通过taskcompete的可以向下查询所有的用户填写的table细节
-//            // 也可以通过taskid查询task的任务标题等信息
-//            // 查询到结果后，返回taskcomplete的id，然后下载通过这个id（在table表中为taskcompleteid）来锁定要下载的数据
-//
-//
-//            //根据orgType查询,得到机构id（orgid）
-//            OrgType orgTypeTmp = orgTypeService.findAllByOrgTpe(Integer.parseInt(orgType) ).get(0);
-//            //开始查询这些机构id下已经完成的任务
-//            for(OrgInfo orgInfo:orgTypeTmp.getOrgs()){
-//
-//                TaskComplete taskComplete = new TaskComplete();
-//                taskComplete.setIscomplete(1);
-//                taskComplete.setOrgid(orgInfo.getOrgid());
-//                //查询该机构id下已经完成的任务，在规定的时间范围了
-//                List<TaskComplete> taskCompleteList = taskCompleteService.query(taskComplete,fromDate,endDate);
-//
-//                //开始查询任务标题，任务描述，任务发布时间，开始时间，结束时间信息
-//                //一个机构下的所有任务
-//                for(TaskComplete taskCompleteTmp : taskCompleteList){
-//
-//                    Map<String,String> resultMapTmp = new HashMap<>();
-//
-//                    Task task = new Task();
-//                    task.setId(taskCompleteTmp.getTaskid());
-//                    Task task1 = taskService.query(task).get(0);
-//
-//                    resultMapTmp.put("tasktitle",task1.getTasktitle());
-//                    resultMapTmp.put("taskdescribe",task1.getTaskdescribe());
-//                    resultMapTmp.put("createtime",task1.getCreatetime());
-//                    //resultMapTmp.put("fromdate",task1.getFromdate());
-//                    //resultMapTmp.put("enddate",task1.getEnddate());
-//                    resultMapTmp.put("taskcompleteid", taskCompleteTmp.getId()+"");
-//                    resultMapTmp.put("orgName",orgInfo.getOrgname() );
-//                    resultMapTmp.put("period",task1.getPeriod());
-//
-//                    //其中一个机构已经完成的一个任务
-//                    resultMap.add(resultMapTmp);
-//                }
-//
-//
-//
-//            }
-//
-//
-////            Table3 table3Tmp = new Table3();
-////            table3Tmp.setFiletype(fileType);
-////            table3Tmp.setOrgtype(Integer.parseInt(orgType));
-////            List<Table3> table3s = table3Service.query(table3Tmp,fromDate,endDate);
-//
-//
-//            return  resultMap;
-//
-//        }else{
-//
-//            Table1 table1Tmp = new Table1();
-//            table1Tmp.setFiletype(fileType);
-//            table1Tmp.setOrgtype(Integer.parseInt(orgType));
-//            List<Table1> table1s = table1Service.query(table1Tmp,fromDate,endDate);
-//
-//
-//            return  table1s;
-//        }
-
-
      }
 
 
 
 
 
-     //单个文件下载
+
+
+
+
+
+
+
+    //驳回
+    @PostMapping("/handleRefuse")
+    public Object handleRefuse(
+            @RequestParam(name="id",defaultValue="") String taskCompleteId,
+            @RequestParam(name="fileType",defaultValue="") String fileType,
+            HttpServletRequest request,
+            HttpServletResponse response,
+            Model model) throws Exception {
+
+        System.out.println("handleRefuse 开始执行============================");
+
+        //0未完成
+        //1带审核
+        //2通过
+        //3驳回
+
+        TaskComplete taskComplete = new TaskComplete();
+        taskComplete.setId(Integer.parseInt(taskCompleteId) );
+        taskComplete.setIscomplete(3);
+        taskCompleteService.update(taskComplete);
+
+
+        return  null;
+    }
+
+
+
+
+    //通过
+    @PostMapping("/handlePass")
+    public Object handlePass(
+            @RequestParam(name="id",defaultValue="") String taskCompleteId,
+            @RequestParam(name="fileType",defaultValue="") String fileType,
+            HttpServletRequest request,
+            HttpServletResponse response,
+            Model model) throws Exception {
+
+        System.out.println("handlePass 开始执行============================");
+
+        //0未完成
+        //1带审核
+        //2通过
+        //3驳回
+
+        TaskComplete taskComplete = new TaskComplete();
+        taskComplete.setId(Integer.parseInt(taskCompleteId) );
+        taskComplete.setIscomplete(2);
+        taskCompleteService.update(taskComplete);
+
+        return  null;
+
+    }
+
+
+
+
+
+
+
+    //单个文件下载，根据taskcomplete的ID
     @PostMapping("/download")
     public Object download(
             @RequestParam(name="id",defaultValue="") String taskCompleteId,
@@ -523,7 +522,7 @@ public class QueryAndDownloadController {
 
 
 
-    //汇总下载
+    //汇总下载，根据taskcomplete的ID
     @PostMapping("/collectDownload")
     public Object collectDownload(
             @RequestParam(name="orgType",defaultValue="") String orgType,

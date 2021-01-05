@@ -39,11 +39,24 @@
 
 
 
-    <select id="update" resultType="com.cbrc.back.model.TaskComplete" parameterType="com.cbrc.back.model.TaskComplete">
+    <update id="update"  parameterType="com.cbrc.back.model.TaskComplete">
 
-        update  taskcomplete set  iscomplete = #{iscomplete} , userid=#{userid} ,completetime = #{completetime} where id=#{id}
+        update  taskcomplete
+         <set>
+             <if test="iscomplete != null ">
+                 iscomplete=#{iscomplete}
+             </if>
+             <if test="userid != null ">
+                 userid=#{userid}
+             </if>
+             <if test="completetime != null ">
+                 completetime=#{completetime}
+             </if>
 
-    </select>
+         </set>
+        where id=#{id}
+
+    </update>
 
 
 </mapper>
