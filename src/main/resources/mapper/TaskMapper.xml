@@ -31,9 +31,12 @@
             <if test="filetype != null "> AND filetype=#{filetype}</if>
             <if test="orgtype != null "> AND orgtype like #{orgtype}</if>
 
+
             <!--<if test="fromDate != null "> AND createtime &gt;= #{fromDate} AND createtime &lt;= #{endDate}</if>-->
 
         </trim>
+
+        ORDER BY createtime DESC
 
     </select>
 

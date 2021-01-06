@@ -13,6 +13,7 @@ public class OrgInfo {
     private String isreal;
     private String state;
     private String orgtype;
+    private String pushtype;
 
 
     private String  manager;

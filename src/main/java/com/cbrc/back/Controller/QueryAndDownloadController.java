@@ -127,9 +127,9 @@ public class QueryAndDownloadController {
 
 
         //根据orgType得到机构类型
-       OrgType orgTypeTmp1 = new OrgType();
-       orgTypeTmp1.setOrgtype(Integer.parseInt(orgType));
-       String orgTypeName = orgTypeService.query(orgTypeTmp1).get(0).getTypename();
+//       OrgType orgTypeTmp1 = new OrgType();
+//       orgTypeTmp1.setOrgtype(Integer.parseInt(orgType));
+//       String orgTypeName = orgTypeService.query(orgTypeTmp1).get(0).getTypename();
 
 
        //根据fileType得到文件类型
@@ -146,57 +146,69 @@ public class QueryAndDownloadController {
 
 
 
-
-
-
         //存储某个机构类型下的所有任务TaskComplete（包括任务类型，包括筛选时间）
         List<TaskComplete> allTaskComplete = new ArrayList<>();
 
 
 
+        //首先通过taskcomplete查询查询在时间范围了，完成的任务，然后通过taskid查询符合要求的任务类型
+        TaskComplete taskCompleteTmp = new TaskComplete();
+        taskCompleteTmp.setIscomplete(2);
+        List<TaskComplete> taskCompleteList = taskCompleteService.queryByCompleteTime(taskCompleteTmp,fromDate,endDate);
+        for(TaskComplete t:taskCompleteList){
 
-        //根据orgType查询,得到机构id（orgid）
-        OrgType orgTypeTmp = orgTypeService.findAllByOrgTpe(Integer.parseInt(orgType) ).get(0);
-        //开始查询这些机构id下已经完成的任务
-        for(OrgInfo orgInfo:orgTypeTmp.getOrgs()){
-
-            TaskComplete taskComplete = new TaskComplete();
-            //查询任务状态为完成
-            taskComplete.setIscomplete(2);
-            taskComplete.setOrgid(orgInfo.getOrgid());
-
-            //查询该机构id下已经完成的任务，在规定的时间范围了
-            List<TaskComplete> taskCompleteList = taskCompleteService.queryByCompleteTime(taskComplete,fromDate,endDate);
-
-            //开始查询任务标题，任务描述，任务发布时间，开始时间，结束时间信息
-            //一个机构下的所有任务
-            for(TaskComplete taskCompleteTmp : taskCompleteList){
-
-                Map<String,String> resultMapTmp = new HashMap<>();
-
-                Task task = new Task();
-                task.setId(taskCompleteTmp.getTaskid());
-                Task task1 = taskService.query(task).get(0);
-
-                //如果是要查询的任务类型就进行存储
-                if(task1.getFiletype().equals(fileType)){
-//                    resultMapTmp.put("tasktitle",task1.getTasktitle());
-//                    resultMapTmp.put("taskdescribe",task1.getTaskdescribe());
-//                    resultMapTmp.put("createtime",task1.getCreatetime());
-//                    //resultMapTmp.put("fromdate",task1.getFromdate());
-//                    //resultMapTmp.put("enddate",task1.getEnddate());
-//                    resultMapTmp.put("taskcompleteid", taskCompleteTmp.getId()+"");
-//                    resultMapTmp.put("orgName",orgInfo.getOrgname() );
-//                    resultMapTmp.put("period",task1.getPeriod());
-
-                    allTaskComplete.add(taskCompleteTmp);
-
-                }
+            //如果是要查询的任务类型就进行存储
+            if(t.getTaskinfo().getFiletype().equals(fileType)){
+                allTaskComplete.add(t);
             }
         }
 
 
 
+
+
+
+
+
+
+
+
+//        //根据orgType查询,得到机构id（orgid）
+//        OrgType orgTypeTmp = orgTypeService.findAllByOrgTpe(Integer.parseInt(orgType) ).get(0);
+//        //开始查询这些机构id下已经完成的任务
+//        for(OrgInfo orgInfo:orgTypeTmp.getOrgs()){
+//
+//            TaskComplete taskComplete = new TaskComplete();
+//            //查询任务状态为完成
+//            taskComplete.setIscomplete(2);
+//            taskComplete.setOrgid(orgInfo.getOrgid());
+//
+//            //查询该机构id下已经完成的任务，在规定的时间范围了
+//            List<TaskComplete> taskCompleteList = taskCompleteService.queryByCompleteTime(taskComplete,fromDate,endDate);
+//
+//            //开始查询任务标题，任务描述，任务发布时间，开始时间，结束时间信息
+//            //一个机构下的所有任务
+//            for(TaskComplete taskCompleteTmp : taskCompleteList){
+//
+//
+//
+//                Task task = new Task();
+//                task.setId(taskCompleteTmp.getTaskid());
+//                Task task1 = taskService.query(task).get(0);
+//
+//                //如果是要查询的任务类型就进行存储
+//                if(task1.getFiletype().equals(fileType)){
+//
+//                    allTaskComplete.add(taskCompleteTmp);
+//
+//                }
+//            }
+//        }
+//
+//
+//
+//
+//
 
 
         //如果没有任何记录
@@ -231,7 +243,7 @@ public class QueryAndDownloadController {
             Map<String,Object> tmp = new HashMap<>();
 
             tmp.put("period",key);
-            tmp.put("orgTypeName",orgTypeName);
+            //tmp.put("orgTypeName",orgTypeName);
             tmp.put("collect",collectByperoid.get(key));
             tmp.put("fileName",fileName);
 
