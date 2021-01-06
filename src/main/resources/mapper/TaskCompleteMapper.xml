@@ -42,18 +42,19 @@
     <update id="update"  parameterType="com.cbrc.back.model.TaskComplete">
 
         update  taskcomplete
-         <set>
+        <trim prefix="set" suffixOverrides=",">
+
              <if test="iscomplete != null ">
-                 iscomplete=#{iscomplete}
+                 iscomplete=#{iscomplete},
              </if>
              <if test="userid != null ">
-                 userid=#{userid}
+                 userid=#{userid},
              </if>
              <if test="completetime != null ">
                  completetime=#{completetime}
              </if>
 
-         </set>
+        </trim>
         where id=#{id}
 
     </update>
