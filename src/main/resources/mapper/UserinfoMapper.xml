@@ -30,8 +30,105 @@
 
 
     <update id="update" parameterType="com.cbrc.back.model.Userinfo">
-        UPDATE userinfo SET username = #{username}, truename = #{truename},  password = #{password}, orgid = #{orgid}, state = #{state}, token = #{token}, modified = #{modified} where userid = #{userid}
+        UPDATE userinfo
+
+        <trim prefix="set" suffixOverrides=",">
+            <if test="username != null ">
+                username=#{username},
+            </if>
+            <if test="truename != null ">
+                truename=#{truename},
+            </if>
+            <if test="telphone != null ">
+                telphone=#{telphone},
+            </if>
+            <if test="password != null ">
+                password=#{password},
+            </if>
+            <if test="orgid != null ">
+                orgid=#{orgid},
+            </if>
+
+        </trim>
+        where userid = #{userid}
+
+
     </update>
+
+
+
+
+
+    <insert id="insert"  parameterType="com.cbrc.back.model.Userinfo">
+        insert into userinfo
+
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="username != null" >
+                username,
+            </if>
+            <if test="truename != null" >
+                truename,
+            </if>
+            <if test="telphone != null" >
+                telphone,
+            </if>
+            <if test="password != null" >
+                password,
+            </if>
+            <if test="orgid != null" >
+                orgid,
+            </if>
+
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+
+            <if test="username != null" >
+                #{username},
+            </if>
+            <if test="truename != null" >
+                #{truename},
+            </if>
+            <if test="telphone != null" >
+                #{telphone},
+            </if>
+            <if test="password != null" >
+                #{password},
+            </if>
+            <if test="orgid != null" >
+                #{orgid},
+            </if>
+        </trim>
+
+
+    </insert>
+
+
+
+    <delete id="delete"  parameterType="java.lang.String">
+        delete from userinfo where userid=#{userid}
+    </delete>
+
+
+
+    <select id="query" resultType="com.cbrc.back.model.Userinfo">
+        select * from userinfo
+
+        <trim prefix="WHERE" prefixOverrides="AND |OR">
+
+            <if test="userid != null "> AND userid=#{userid}</if>
+            <if test="username != null "> AND username=#{username}</if>
+            <if test="truename != null "> AND truename=#{truename}</if>
+            <if test="telphone != null "> AND telphone like #{telphone}</if>
+            <if test="password != null "> AND password like #{password}</if>
+            <if test="orgid != null "> AND orgid like #{orgid}</if>
+
+
+        </trim>
+
+        ORDER BY orgid DESC
+
+    </select>
+
 
 
 

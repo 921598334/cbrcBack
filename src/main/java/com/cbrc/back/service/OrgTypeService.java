@@ -38,9 +38,6 @@ public class OrgTypeService {
         }
 
 
-
-
-
         return orgTypeList;
     }
 
@@ -80,6 +77,22 @@ public class OrgTypeService {
     }
 
 
+
+    //根据机构号得到名称
+    public void  update(OrgType orgType) {
+       orgTypeMapper.update(orgType);
+    }
+
+
+    public void  delete(String orgtype) {
+        orgTypeMapper.delete(orgtype);
+    }
+
+
+
+    public void  insert(OrgType orgType) {
+         orgTypeMapper.insert(orgType);
+    }
 
 
 

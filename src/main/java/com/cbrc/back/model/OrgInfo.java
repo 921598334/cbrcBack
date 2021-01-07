@@ -17,7 +17,7 @@ public class OrgInfo {
 
 
     private String  manager;
-
+    private String orgTypeName;
 
 
 

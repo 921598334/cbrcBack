@@ -14,11 +14,14 @@ import java.util.List;
 public interface OrgInfoMapper {
 
 
-
+    void insert(OrgInfo orgInfo);
 
     List<OrgInfo> query(OrgInfo orgInfo);
 
+    void update(OrgInfo orgInfo);
 
+
+    void delete(OrgInfo orgInfo);
 }
 
 

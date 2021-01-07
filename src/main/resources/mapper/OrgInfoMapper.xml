@@ -18,13 +18,47 @@
             <if test="pushtype != null "> AND pushtype=#{pushtype}</if>
         </trim>
 
+        ORDER BY orgname
+
     </select>
 
 
 
 
 
+    <insert id="insert"  parameterType="com.cbrc.back.model.OrgInfo">
+        insert into orginfo(orgid,orgname,orgtype,manager) values  (#{orgid},#{orgname},#{orgtype},#{manager})
+    </insert>
 
 
+
+
+
+    <update id="update"  parameterType="com.cbrc.back.model.OrgInfo">
+
+        update  orginfo
+        <trim prefix="set" suffixOverrides=",">
+            <if test="orgname != null ">
+                orgname=#{orgname},
+            </if>
+            <if test="orgtype != null ">
+                orgtype=#{orgtype},
+            </if>
+            <if test="manager != null ">
+                manager=#{manager},
+            </if>
+
+        </trim>
+        where orgid=#{orgid}
+
+    </update>
+
+
+
+
+
+    <delete id="delete"  parameterType="java.lang.String">
+        delete from orginfo where orgid=#{orgid}
+    </delete>
 
 </mapper>

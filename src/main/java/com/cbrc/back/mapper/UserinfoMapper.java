@@ -4,6 +4,8 @@ package com.cbrc.back.mapper;
 import com.cbrc.back.model.Userinfo;
 import org.apache.ibatis.annotations.*;
 
+import java.util.List;
+
 @Mapper
 public interface UserinfoMapper {
 
@@ -31,4 +33,12 @@ public interface UserinfoMapper {
     //更新用户信息
     //@Update("UPDATE userinfo SET username = #{username}, truename = #{truename},  password = #{password}, orgid = #{orgid}, state = #{state}, token = #{token}, modified = #{modified} where userid = #{userid}")
     void update(Userinfo user);
+
+
+    void delete(Userinfo user);
+
+    void insert(Userinfo user);
+
+    List<Userinfo> query(Userinfo user);
+
 }

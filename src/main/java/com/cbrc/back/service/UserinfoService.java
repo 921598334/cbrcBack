@@ -6,6 +6,8 @@ import com.cbrc.back.model.Userinfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class UserinfoService {
 
@@ -33,4 +35,19 @@ public class UserinfoService {
     public void update(Userinfo userinfo){
         userinfoMapper.update(userinfo);
     }
+
+
+
+    public void delete(Userinfo userinfo){
+        userinfoMapper.delete(userinfo);
+    }
+
+    public void insert(Userinfo userinfo){
+        userinfoMapper.insert(userinfo);
+    }
+
+    public List<Userinfo> query(Userinfo userinfo){
+        return userinfoMapper.query(userinfo);
+    }
+
 }

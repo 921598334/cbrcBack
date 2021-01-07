@@ -16,8 +16,40 @@
             <if test="orgtype != null "> AND orgtype=#{orgtype}</if>
 
         </trim>
-
     </select>
+
+
+
+
+
+
+    <update id="update"  parameterType="com.cbrc.back.model.OrgType">
+
+        update  dic_orgtype
+        <trim prefix="set" suffixOverrides=",">
+            <if test="typename != null ">
+                typename=#{typename},
+            </if>
+        </trim>
+        where orgtype=#{orgtype}
+
+    </update>
+
+
+
+
+    <delete id="delete"  parameterType="java.lang.String">
+        delete from dic_orgtype where orgtype=#{orgtype}
+    </delete>
+
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="orgtype" parameterType="com.cbrc.back.model.OrgType">
+        insert into dic_orgtype(typename) values  (#{typename})
+    </insert>
+
+
+
+
 
 
 

@@ -17,6 +17,6 @@ public class Userinfo {
 
     private String token;
     private String modified;
-
+    private String orgName;
 
 }

@@ -20,6 +20,12 @@ public interface OrgTypeMapper {
 
     List<OrgType> query(OrgType orgType);
 
+    void update(OrgType orgType);
+
+    void delete(String orgtype);
+
+
+    void insert(OrgType orgType);
 }
 
 
