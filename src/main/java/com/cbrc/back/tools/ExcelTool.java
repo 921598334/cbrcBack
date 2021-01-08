@@ -17,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
+import java.net.InetAddress;
 import java.util.*;
 
 @Component
@@ -27,10 +28,21 @@ public class ExcelTool {
     TableStructMapper tableStructMapper;
 
 
+    //String globalDownloadIp="122.114.178.53:8080";
+    String globalDownloadIp="127.0.0.1:8080";
+
     //templateId:模版索引
     //value:需要填充的直，其按照key，value存储，
     public String writeExcelPOI1(Table1 table1,boolean isCollect,String fileType,String manager,String orgName,String period,String user,String tel) {
         try {
+
+
+
+            //需要返回给前端的下载ip，即告诉前端从那个地址下载（//不知道为什么虚拟机上无法读取）
+            InetAddress ia=InetAddress.getLocalHost();
+            String downloadIp = ia.getHostAddress()+":8080";
+            System.out.println("返回给前端的ip地址为："+downloadIp);
+            System.out.println("项目根路径："+System.getProperty("user.dir"));
 
             String fileName = "";
 
@@ -46,8 +58,10 @@ public class ExcelTool {
 
 
 
-            String fullPath = System.getProperty("user.dir")+"/src/main/resources/static/template/"+fileName;
-
+            String fullPath = System.getProperty("user.dir")+File.separator+"src"+File.separator+"main"+File.separator+"resources"+File.separator+"static"+File.separator+"template"+File.separator+fileName;
+            //D:\target\target\classes\static\template
+            //String fullPath = System.getProperty("user.dir")+File.separator+"classes"+File.separator+"static"+File.separator+"template"+File.separator+fileName;
+            System.out.println("文件模版路径:"+fullPath);
 
 
             HSSFWorkbook xwb = new HSSFWorkbook(new FileInputStream(fullPath));
@@ -348,19 +362,23 @@ public class ExcelTool {
 
             if(isCollect){
 
-                //生成excel放入该路径下
-                outPath = System.getProperty("user.dir")+"/src/main/resources/static/download/"+"汇总表—"+orgName+"-"+period+"-"+fileName+"-"+ System.currentTimeMillis()+".xls";
+                //String fullPath = System.getProperty("user.dir")+File.separator+"classes"+File.separator+"static"+File.separator+"template"+File.separator+fileName;
+                outPath = System.getProperty("user.dir")+File.separator+"src"+File.separator+"main"+File.separator+"resources"+File.separator+"static"+File.separator+"download"+File.separator+"汇总表—"+orgName+"-"+period+"-"+fileName+"-"+ System.currentTimeMillis()+".xls";
                 //前端使用该路径下载
-                downloadPath = "127.0.0.1:8080/download/"+"汇总表—"+orgName+"-"+period+"-"+fileName+"-"+System.currentTimeMillis()+".xls";
+                downloadPath = globalDownloadIp+File.separator+"download"+File.separator+"汇总表—"+orgName+"-"+period+"-"+fileName+"-"+System.currentTimeMillis()+".xls";
 
 
             }else{
                 //生成excel放入该路径下
-                outPath = System.getProperty("user.dir")+"/src/main/resources/static/download/"+orgName+"-"+period+"-"+fileName+"-"+ System.currentTimeMillis()+".xls";
+                outPath = System.getProperty("user.dir")+File.separator+"src"+File.separator+"main"+File.separator+"resources"+File.separator+"static"+File.separator+"download"+File.separator+orgName+"-"+period+"-"+fileName+"-"+ System.currentTimeMillis()+".xls";
                 //前端使用该路径下载
-                downloadPath = "127.0.0.1:8080/download/"+orgName+"-"+period+"-"+fileName+"-"+System.currentTimeMillis()+".xls";
+                downloadPath = globalDownloadIp+"/download/"+orgName+"-"+period+"-"+fileName+"-"+System.currentTimeMillis()+".xls";
 
             }
+
+
+            System.out.println("文件输出路径:"+outPath);
+            System.out.println("给前端的下载路径:"+downloadPath);
 
             FileOutputStream out = new FileOutputStream(outPath);
             xwb.write(out);
@@ -392,11 +410,19 @@ public class ExcelTool {
 
         try {
 
+            //需要返回给前端的下载ip，即告诉前端从那个地址下载
+            InetAddress ia=InetAddress.getLocalHost();
+            String downloadIp = ia.getHostAddress()+":8080";
+            System.out.println("返回给前端的ip地址为："+downloadIp);
+            System.out.println("项目根路径："+System.getProperty("user.dir"));
+
+
             String fileName = "附件3：合作销售寿险公司产品统计表.xls";
 
 
-            String fullPath = System.getProperty("user.dir")+"/src/main/resources/static/template/"+fileName;
-
+            String fullPath = System.getProperty("user.dir")+File.separator+"src"+File.separator+"main"+File.separator+"resources"+File.separator+"static"+File.separator+"template"+File.separator+fileName;
+            //String fullPath = System.getProperty("user.dir")+File.separator+"classes"+File.separator+"static"+File.separator+"template"+File.separator+fileName;
+            System.out.println("文件模版路径:"+fullPath);
 
             HSSFWorkbook xwb = new HSSFWorkbook(new FileInputStream(fullPath));
 
@@ -548,22 +574,24 @@ public class ExcelTool {
 //                //前端使用该路径下载
 //                downloadPath = "127.0.0.1:8080/download/"+"汇总表"+"-"+fileName+"-"+System.currentTimeMillis()+".xls";
 
-                //生成excel放入该路径下
-                outPath = System.getProperty("user.dir")+"/src/main/resources/static/download/"+"汇总表—"+orgName+"-"+period+"-"+fileName+"-"+ System.currentTimeMillis()+".xls";
+                outPath = System.getProperty("user.dir")+File.separator+"src"+File.separator+"main"+File.separator+"resources"+File.separator+"static"+File.separator+"download"+File.separator+"汇总表—"+orgName+"-"+period+"-"+fileName+"-"+ System.currentTimeMillis()+".xls";
                 //前端使用该路径下载
-                downloadPath = "127.0.0.1:8080/download/"+"汇总表—"+orgName+"-"+period+"-"+fileName+"-"+System.currentTimeMillis()+".xls";
+                downloadPath = globalDownloadIp+File.separator+"download"+File.separator+"汇总表—"+orgName+"-"+period+"-"+fileName+"-"+System.currentTimeMillis()+".xls";
 
 
             }else {
                 //生成excel放入该路径下
-                outPath = System.getProperty("user.dir")+"/src/main/resources/static/download/"+orgName+"-"+period+"-"+fileName+"-"+ System.currentTimeMillis()+".xls";
+
+
+                outPath = System.getProperty("user.dir")+File.separator+"src"+File.separator+"main"+File.separator+"resources"+File.separator+"static"+File.separator+"download"+File.separator+orgName+"-"+period+"-"+fileName+"-"+ System.currentTimeMillis()+".xls";
                 //前端使用该路径下载
-                downloadPath = "127.0.0.1:8080/download/"+orgName+"-"+period+"-"+fileName+"-"+System.currentTimeMillis()+".xls";
+                downloadPath = globalDownloadIp+"/download/"+orgName+"-"+period+"-"+fileName+"-"+System.currentTimeMillis()+".xls";
 
             }
 
 
-
+            System.out.println("文件输出路径:"+outPath);
+            System.out.println("给前端的下载路径:"+downloadPath);
 
 
             FileOutputStream out = new FileOutputStream(outPath);

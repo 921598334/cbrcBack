@@ -1,16 +1,16 @@
 package com.cbrc.back;
 
-import com.cbrc.back.cache.Cache;
-import com.cbrc.back.model.Table1;
 import com.cbrc.back.model.Table3;
-import com.cbrc.back.model.Task;
+
 import com.cbrc.back.service.TaskService;
-import org.apache.ibatis.javassist.bytecode.stackmap.BasicBlock;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.lang.reflect.Field;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.List;
 
 @SpringBootTest
@@ -51,6 +51,10 @@ class BackApplicationTests {
     @Test
     void testMapper() {
 
+
+        String fullPath = System.getProperty("user.dir");
+
+        System.out.println(fullPath);
 
 
     }
