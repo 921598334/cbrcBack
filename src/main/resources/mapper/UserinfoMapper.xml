@@ -104,7 +104,7 @@
 
 
 
-    <delete id="delete"  parameterType="java.lang.String">
+    <delete id="delete"  parameterType="java.lang.Integer">
         delete from userinfo where userid=#{userid}
     </delete>
 

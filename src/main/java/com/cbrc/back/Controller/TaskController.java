@@ -8,6 +8,7 @@ import com.cbrc.back.service.TaskCompleteService;
 import com.cbrc.back.service.TaskService;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
@@ -256,6 +257,7 @@ public class TaskController {
 
 
     //发布任务
+    @Transactional(rollbackFor = Exception.class)
     @PostMapping("/publish")
     public Object publish(
             @RequestParam(name="fileType",defaultValue="") String fileType,
@@ -315,19 +317,22 @@ public class TaskController {
         try{
             taskService.insert(task);
 
+            //数据插入后生成taskcomplete表
+            for(int i=0;i<selectedValueList.size();i++){
+                TaskComplete taskComplete = new TaskComplete();
+                taskComplete.setIscomplete(0);
+                taskComplete.setTaskid(task.getId());
+                taskComplete.setOrgid(selectedValueList.get(i));
+                taskCompleteService.insert(taskComplete);
+            }
+
         }catch (Exception e){
             e.printStackTrace();
+            throw  e;
         }
 
 
-        //数据插入后生成taskcomplete表
-        for(int i=0;i<selectedValueList.size();i++){
-            TaskComplete taskComplete = new TaskComplete();
-            taskComplete.setIscomplete(0);
-            taskComplete.setTaskid(task.getId());
-            taskComplete.setOrgid(selectedValueList.get(i));
-            taskCompleteService.insert(taskComplete);
-        }
+
 
         return  null;
 

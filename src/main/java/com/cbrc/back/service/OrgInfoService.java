@@ -31,7 +31,17 @@ public class OrgInfoService {
 
             OrgType orgTypeTmp = new OrgType();
             orgTypeTmp.setOrgtype(Integer.parseInt(orgInfoTmp.getOrgtype()));
-            orgInfoTmp.setOrgTypeName(orgTypeMapper.query(orgTypeTmp).get(0).getTypename());
+
+
+            List<OrgType> orgTypes = orgTypeMapper.query(orgTypeTmp);
+            if(orgTypes==null || orgTypes.size()==0){
+                //表示没有通过机构类型id查询到机构类型
+                orgInfoTmp.setOrgTypeName("未知机构类型："+orgInfoTmp.getOrgtype());
+            }else{
+                orgInfoTmp.setOrgTypeName(orgTypes.get(0).getTypename());
+            }
+
+
         }
 
 

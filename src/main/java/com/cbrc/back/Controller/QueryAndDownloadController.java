@@ -382,11 +382,25 @@ public class QueryAndDownloadController {
         //2通过
         //3驳回
 
+
+        //首先查询原来任务
+        TaskComplete oldTaskComplete = new TaskComplete();
+        oldTaskComplete.setId(Integer.parseInt(taskCompleteId) );
+        oldTaskComplete = taskCompleteService.query(oldTaskComplete).get(0);
+
+
+        //进行任务驳回
         TaskComplete taskComplete = new TaskComplete();
         taskComplete.setId(Integer.parseInt(taskCompleteId) );
         taskComplete.setIscomplete(3);
         taskCompleteService.update(taskComplete);
 
+
+        //任务驳回后需要后需要重新为其生成新的任务
+        oldTaskComplete.setIscomplete(0);
+        oldTaskComplete.setUserid(null);
+        oldTaskComplete.setCompletetime(null);
+        taskCompleteService.insert(oldTaskComplete);
 
         return  null;
     }

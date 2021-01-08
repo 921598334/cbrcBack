@@ -31,16 +31,42 @@ public class UserSettingController {
 
 
 
+    @PostMapping("/updateUserInfo")
+    public Object updateUserInfo(
+            @RequestParam(name="updateUserId",defaultValue="" ) String userid,
+            @RequestParam(name="updateUserName",defaultValue="" ) String username,
+            @RequestParam(name="updateTrueName",defaultValue="" ) String truename,
+            @RequestParam(name="updateTelphone",defaultValue="" ) String telphone,
+            @RequestParam(name="updatePassword",defaultValue="" ) String password,
+            @RequestParam(name="updateOrgType" ,defaultValue="") String orgid,
+            HttpServletRequest request,
+            HttpServletResponse response
+    ){
+
+
+        Userinfo userinfo = new Userinfo();
+        userinfo.setUserid(Integer.parseInt(userid) );
+        userinfo.setUsername(username);
+        userinfo.setTruename(truename);
+        userinfo.setTelphone(telphone);
+        userinfo.setPassword(password);
+        userinfo.setOrgid(orgid);
+
+        userinfoService.update(userinfo);
+
+        return  null;
+
+    }
 
     @PostMapping("/insertUser")
     public Object insertUser(
 
 
-            @RequestParam(name="username" ) String username,
-            @RequestParam(name="truename" ) String truename,
-            @RequestParam(name="telphone" ) String telphone,
-            @RequestParam(name="password" ) String password,
-            @RequestParam(name="orgid" ) String orgid,
+            @RequestParam(name="newOrgType",defaultValue="" ) String newOrgType,
+            @RequestParam(name="newPassword",defaultValue="" ) String newPassword,
+            @RequestParam(name="newTel",defaultValue="" ) String newTel,
+            @RequestParam(name="newTrueUserName" ,defaultValue="") String newTrueUserName,
+            @RequestParam(name="newUserName",defaultValue="" ) String newUserName,
             HttpServletRequest request,
             HttpServletResponse response
     ){
@@ -48,11 +74,11 @@ public class UserSettingController {
 
         Userinfo userinfo = new Userinfo();
 
-        userinfo.setUsername(username);
-        userinfo.setTruename(truename);
-        userinfo.setTelphone(telphone);
-        userinfo.setPassword(password);
-        userinfo.setOrgid(orgid);
+        userinfo.setUsername(newUserName);
+        userinfo.setTruename(newTrueUserName);
+        userinfo.setTelphone(newTel);
+        userinfo.setPassword(newPassword);
+        userinfo.setOrgid(newOrgType);
 
         userinfoService.insert(userinfo);
 
@@ -62,9 +88,12 @@ public class UserSettingController {
 
 
 
+
+
+
     @PostMapping("/deleteUser")
     public Object deleteOrgInfo(
-            @RequestParam(name="id",defaultValue="") String id,
+            @RequestParam(name="userid",defaultValue="") String id,
             HttpServletRequest request,
             HttpServletResponse response
     ){
@@ -84,32 +113,7 @@ public class UserSettingController {
 
 
 
-    @PostMapping("/updateUserInfo")
-    public Object updateUserInfo(
-            @RequestParam(name="updateUserId" ) String userid,
-            @RequestParam(name="updateUserName" ) String username,
-            @RequestParam(name="updateTrueName" ) String truename,
-            @RequestParam(name="updateTelphone" ) String telphone,
-            @RequestParam(name="updatePassword" ) String password,
-            @RequestParam(name="updateOrgType" ) String orgid,
-            HttpServletRequest request,
-            HttpServletResponse response
-    ){
 
-
-        Userinfo userinfo = new Userinfo();
-        userinfo.setUserid(Integer.parseInt(userid) );
-        userinfo.setUsername(username);
-        userinfo.setTruename(truename);
-        userinfo.setTelphone(telphone);
-        userinfo.setPassword(password);
-        userinfo.setOrgid(orgid);
-
-        userinfoService.update(userinfo);
-
-        return  null;
-
-    }
 
 
 
