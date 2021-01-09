@@ -32,8 +32,43 @@ public class UserinfoService {
     }
 
 
-    public void update(Userinfo userinfo){
-        userinfoMapper.update(userinfo);
+    public String update(Userinfo userinfo){
+
+        //更新用户之前先检查下用户名是否存在
+        Userinfo userinfoTmp = new Userinfo();
+
+        //当用户确实是要更新用户名时
+        if(userinfo.getUsername()!=null && !userinfo.getUsername().equals("")){
+
+            userinfoTmp.setUsername(userinfo.getUsername());
+            List<Userinfo> oldUserinfoList = userinfoMapper.query(userinfoTmp);
+
+            int count = 0;
+            //检查查询到到该用户名到id，如果除去本身的id外，还有其他的用户名，那就重名了，不能更新，否则可以更新
+            for(Userinfo u:oldUserinfoList){
+
+                if(u.getUserid().equals(userinfo.getUserid())){
+                   continue;
+                }
+                ++count;
+            }
+
+
+            if(count==0){
+                userinfoMapper.update(userinfo);
+            }else{
+                //除去自身之外，还有其他同名的用户名，就不能添加了
+                return "该用户名已被其他用户使用，请更换用户名";
+            }
+
+        }else{
+            userinfoMapper.update(userinfo);
+        }
+
+
+        return "S";
+
+
     }
 
 
@@ -42,8 +77,22 @@ public class UserinfoService {
         userinfoMapper.delete(userinfo);
     }
 
-    public void insert(Userinfo userinfo){
-        userinfoMapper.insert(userinfo);
+    public String insert(Userinfo userinfo){
+
+        //插入用户之前先检查下用户名是否存在
+        Userinfo userinfoTmp = new Userinfo();
+        userinfoTmp.setUsername(userinfo.getUsername());
+        List<Userinfo> userinfoList = userinfoMapper.query(userinfoTmp);
+
+        if(userinfoList.size()>=1){
+
+            //当前用户名已经存在了
+            return "当前用户名已经存在,请更换用户名";
+
+        }else{
+            userinfoMapper.insert(userinfo);
+            return "S";
+        }
     }
 
     public List<Userinfo> query(Userinfo userinfo){

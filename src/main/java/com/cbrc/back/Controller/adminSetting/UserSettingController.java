@@ -14,7 +14,9 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 
@@ -52,9 +54,16 @@ public class UserSettingController {
         userinfo.setPassword(password);
         userinfo.setOrgid(orgid);
 
-        userinfoService.update(userinfo);
+        String status = userinfoService.update(userinfo);
 
-        return  null;
+        if(status.equals("S")){
+            return null;
+        }else{
+            Map<String,String> result = new HashMap<>();
+            result.put("F",status);
+            return  result;
+        }
+
 
     }
 
@@ -80,9 +89,16 @@ public class UserSettingController {
         userinfo.setPassword(newPassword);
         userinfo.setOrgid(newOrgType);
 
-        userinfoService.insert(userinfo);
+        String status = userinfoService.insert(userinfo);
+        if(status.equals("S")){
+            return null;
+        }else{
+            Map<String,String> result = new HashMap<>();
+            result.put("F",status);
+            return  result;
+        }
 
-        return null;
+
     }
 
 
@@ -122,13 +138,22 @@ public class UserSettingController {
     //得到所有的用户和机构信息
     @PostMapping("/initUsers")
     public Object InitUsers(
+            @RequestParam(name="userid",defaultValue="") String userid,
             HttpServletRequest request,
             HttpServletResponse response
     ){
 
 
+        Userinfo userinfoTmp = new Userinfo();
 
-        List<Userinfo> userinfoList = userinfoService.query(new Userinfo());
+        if(!userid.equals("")){
+            userinfoTmp.setUserid(Integer.parseInt(userid) );
+        }
+
+
+
+
+        List<Userinfo> userinfoList = userinfoService.query(userinfoTmp);
 
 
         //查询用户所属机构的中文名称

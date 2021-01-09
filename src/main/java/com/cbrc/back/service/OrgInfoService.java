@@ -30,16 +30,21 @@ public class OrgInfoService {
         for(OrgInfo orgInfoTmp:orgInfoList){
 
             OrgType orgTypeTmp = new OrgType();
-            orgTypeTmp.setOrgtype(Integer.parseInt(orgInfoTmp.getOrgtype()));
 
-
-            List<OrgType> orgTypes = orgTypeMapper.query(orgTypeTmp);
-            if(orgTypes==null || orgTypes.size()==0){
+            if(orgInfoTmp.getOrgtype()==null || orgInfoTmp.getOrgtype().equals("")){
                 //表示没有通过机构类型id查询到机构类型
                 orgInfoTmp.setOrgTypeName("未知机构类型："+orgInfoTmp.getOrgtype());
             }else{
-                orgInfoTmp.setOrgTypeName(orgTypes.get(0).getTypename());
+                orgTypeTmp.setOrgtype(Integer.parseInt(orgInfoTmp.getOrgtype()));
+                List<OrgType> orgTypes = orgTypeMapper.query(orgTypeTmp);
+                if(orgTypes==null || orgTypes.size()==0){
+                    //表示没有通过机构类型id查询到机构类型
+                    orgInfoTmp.setOrgTypeName("未知机构类型："+orgInfoTmp.getOrgtype());
+                }else{
+                    orgInfoTmp.setOrgTypeName(orgTypes.get(0).getTypename());
+                }
             }
+
 
 
         }
