@@ -23,4 +23,51 @@
 
 
 
+    <insert id="insert"  parameterType="com.cbrc.back.model.TimerTask">
+        insert into timertask(tasktitle,taskdescribe,filetype,orgtype,userid,isenable )
+         values
+           (#{tasktitle},#{taskdescribe},#{filetype},#{orgtype},#{userid},#{isenable})
+    </insert>
+
+
+
+    <delete id="delete"  parameterType="java.lang.String">
+        delete from timertask where id=#{id}
+    </delete>
+
+
+    <update id="update"  parameterType="com.cbrc.back.model.TimerTask">
+
+        update  timertask
+        <trim prefix="set" suffixOverrides=",">
+            <if test="tasktitle != null ">
+                tasktitle=#{tasktitle},
+            </if>
+            <if test="taskdescribe != null ">
+                taskdescribe=#{taskdescribe},
+            </if>
+
+            <if test="filetype != null ">
+                filetype=#{filetype},
+            </if>
+            <if test="orgtype != null ">
+                orgtype=#{orgtype},
+            </if>
+            <if test="userid != null ">
+                userid=#{userid},
+            </if>
+            <if test="isenable != null ">
+                isenable=#{isenable},
+            </if>
+
+
+
+        </trim>
+        where id=#{id}
+
+    </update>
+
+
+
+
 </mapper>

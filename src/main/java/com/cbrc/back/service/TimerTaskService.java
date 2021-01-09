@@ -22,4 +22,19 @@ public class TimerTaskService {
        return taskMapper.query(timerTask);
    }
 
+
+    public void insert(TimerTask timerTask){
+         taskMapper.insert(timerTask);
+    }
+
+
+    public void update(TimerTask timerTask){
+        taskMapper.update(timerTask);
+    }
+
+
+
+    public void delete(String id){
+        taskMapper.delete(id);
+    }
 }

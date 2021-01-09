@@ -19,8 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.text.SimpleDateFormat;
-
-
+import java.util.Timer;
 
 
 //定时任务，在每季度最后一天23点59分59秒推送任务
@@ -53,61 +52,33 @@ public class SaticScheduleTask {
     //@Scheduled(cron = "0 59 23 L 3,6,9,12 ?")
 
     //每季度第一天，1点发布任务
-    @Scheduled(cron = "0 00 1 1 4,7,10,1 ?")
+    //@Scheduled(cron = "0 00 1 1 4,7,10,1 ?")
 
+
+    //每天的0点、13点、18点、21点都执行一次
+    @Scheduled(cron = "0 0 0,13,18,21 * * ?")
     //或直接指定时间间隔，例如：5秒
-    //@Scheduled(fixedRate=5000)
+    //@Scheduled(fixedRate=50000)
     private void configureTasks() {
         System.err.println("定时任务开始执行，当前时间为: " + LocalDateTime.now());
 
 
-
-
-
         //生成任务
-        //1.首先读取 pushtype,得到id，和filetypes，其中filetypes是一个json对象，里面存储了需要推送的数据
-        //2.读取 orginfo 表，通过 pushtype 的id查询某个pushtype记录对应的需要推送的机构，得到机构的orgid
-        //3.解析json对象，并且进行遍历，生成所有任务
+        List<TimerTask> timerTaskList = timerTaskService.query(new TimerTask());
 
-
-        //1..首先读取 pushtype,得到id，和filetypes，其中filetypes是一个json对象，里面存储了需要推送的数据
-        TimerTask timerTaskTmp = new TimerTask();
-        List<TimerTask> timerTaskList = timerTaskService.query(timerTaskTmp);
         for(TimerTask timerTask:timerTaskList){
+            //为每个定时任务（TimerTask）生成任务（Task）
 
-            //得到需要推送的机构
-            Integer timerTaskId =  timerTask.getId();
-            OrgInfo orgInfoTmp = new OrgInfo();
-            orgInfoTmp.setPushtype(timerTaskId+"");
-            List<OrgInfo> orgInfoList = orgInfoService.query(orgInfoTmp);
-            List<String> selectedValueList = new ArrayList<>();
-            for(OrgInfo orgInfo:orgInfoList){
-                selectedValueList.add(orgInfo.getOrgid());
-            }
+            if(timerTask.getIsenable()==1){
 
-
-            //得到该推送任务下，需要推送的文件类型
-
-            String fileTypeString = timerTask.getFiletypes();
-            List<String> fileTypes  = (List<String>) JSON.parse(fileTypeString);
+                Task taskTmp = new Task();
+                taskTmp.setFiletype(timerTask.getFiletype());
+                taskTmp.setTasktitle("定时任务"+"("+LocalDateTime.now()+")"+timerTask.getTasktitle());
+                taskTmp.setTaskdescribe(timerTask.getTaskdescribe());
+                taskTmp.setUserid(Integer.parseInt( timerTask.getUserid()) );
+                taskTmp.setCreatetime(dateformat.format(System.currentTimeMillis()));
 
 
-
-
-            //开始生成任务
-            for(String fileType:fileTypes){
-
-                //把数据存储在数据库中
-                Task task = new Task();
-                task.setFiletype(fileType);
-//              task.setFromdate(fromDate);
-//              task.setEnddate(endDate);
-                task.setTasktitle(LocalDateTime.now()+"的定时任务");
-                task.setTaskdescribe(LocalDateTime.now()+"的定时任务");
-                //定时任务的用户id为0
-                task.setUserid(0);
-                task.setCreatetime(dateformat.format(System.currentTimeMillis()));
-                //还需要选择该任务是那一年第几季度的任务
                 String period = dateformat.format(System.currentTimeMillis());
                 String[] periodTmp = period.split("-");
                 if(periodTmp[1].equals("01")){
@@ -119,41 +90,21 @@ public class SaticScheduleTask {
                 }else if(periodTmp[1].equals("10")){
                     period = periodTmp[0]+"年第4季度";
                 }
+                taskTmp.setPeriod(period.substring(1));
 
-                task.setPeriod(period);
-
-
-                String str = JSON.toJSONString(selectedValueList);
-
-                task.setOrgtype(str);
+                taskTmp.setOrgtype(timerTask.getOrgtype());
 
 
                 try{
-                    taskService.insert(task);
+                    taskService.insert(taskTmp);
+                    //数据插入后生成taskcomplete表
+                    taskService.createTaskComplete(taskTmp);
+
                 }catch (Exception e){
                     e.printStackTrace();
+                    throw  e;
                 }
-
-
-                //数据插入后生成taskcomplete表
-                for(int i=0;i<selectedValueList.size();i++){
-                    TaskComplete taskComplete = new TaskComplete();
-                    taskComplete.setIscomplete(0);
-                    taskComplete.setTaskid(task.getId());
-                    taskComplete.setOrgid(selectedValueList.get(i));
-                    taskCompleteService.insert(taskComplete);
-                }
-
             }
-
-
         }
-
-
-
-
-
-
-
     }
 }

@@ -8,9 +8,14 @@ import lombok.Data;
 public class TimerTask {
 
     private Integer id;
-    private String name;
-    private String filetypes;
 
+
+    private String tasktitle;
+    private String taskdescribe;
+    private String orgtype;
+    private String userid;
+    private String filetype;
+    private Integer isenable;
 
 
 

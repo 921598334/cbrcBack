@@ -1,6 +1,7 @@
 package com.cbrc.back.service;
 
 
+import com.alibaba.fastjson.JSON;
 import com.cbrc.back.mapper.*;
 import com.cbrc.back.model.OrgInfo;
 import com.cbrc.back.model.OrgType;
@@ -73,6 +74,27 @@ public class TaskService {
     public void update(Task task){
         taskMapper.update(task);
     }
+
+
+
+
+
+
+    //根据任务生成机构需要完成的taomplete
+    public void createTaskComplete(Task task){
+
+        String orgListString = task.getOrgtype();
+        List<String> orgList = JSON.parseArray(orgListString,String.class);
+
+        for(String org:orgList){
+            TaskComplete taskComplete = new TaskComplete();
+            taskComplete.setIscomplete(0);
+            taskComplete.setTaskid(task.getId());
+            taskComplete.setOrgid(org);
+            taskCompleteMapper.insert(taskComplete);
+        }
+    }
+
 
 
 }

@@ -45,7 +45,7 @@ public class Table1Service {
 
 
 
-
+    //在table1中插入任务，同时设置taskcomplete的完成状态
     public void insert(Table1 table1,String userid,String taskCompleteId){
         table1Mapper.insert(table1);
 

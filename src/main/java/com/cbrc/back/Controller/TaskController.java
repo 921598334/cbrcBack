@@ -3,14 +3,15 @@ package com.cbrc.back.Controller;
 
 import com.alibaba.fastjson.JSON;
 import com.cbrc.back.model.*;
-import com.cbrc.back.service.OrgTypeService;
-import com.cbrc.back.service.TaskCompleteService;
-import com.cbrc.back.service.TaskService;
+import com.cbrc.back.model.TimerTask;
+import com.cbrc.back.service.*;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.poi.ss.formula.functions.T;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import sun.jvm.hotspot.opto.MachNode;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -30,6 +31,13 @@ public class TaskController {
 
     @Autowired
     TaskCompleteService taskCompleteService;
+
+    @Autowired
+    TimerTaskService timerTaskService;
+
+
+    @Autowired
+    OrgInfoService orgInfoService;
 
     SimpleDateFormat dateformat = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -164,6 +172,78 @@ public class TaskController {
 
 
 
+    @PostMapping("/updateTimerTask")
+    public Object updateTimerTask(
+            @RequestParam(name="id",defaultValue="") String id,
+            @RequestParam(name="filetype",defaultValue="") String fileType,
+            @RequestParam(name="fromdate",defaultValue="") String fromDate,
+            @RequestParam(name="enddate",defaultValue="") String endDate,
+            @RequestParam(name="tasktitle",defaultValue="") String taskTitle,
+            @RequestParam(name="taskDescribe",defaultValue="") String taskDescribe,
+            @RequestParam(name="selectedValue",defaultValue="") String selectedValue,
+            @RequestParam(name="userid",defaultValue="") String userid,
+            @RequestParam(name="period",defaultValue="") String period,
+            @RequestParam(name="isenable",defaultValue="") String isenable,
+
+
+            HttpServletRequest request,
+            HttpServletResponse response,
+            Model model) throws Exception {
+
+        System.out.println("updateTimerTask 开始执行============================");
+
+
+
+        //把数据存储在数据库中
+        TimerTask task = new TimerTask();
+        task.setId(Integer.parseInt(id));
+        task.setFiletype(fileType);
+        task.setTasktitle(taskTitle);
+        task.setTaskdescribe(taskDescribe);
+        if(isenable.equals("true")){
+            task.setIsenable(1);
+        }else{
+            task.setIsenable(0);
+        }
+
+
+        List<String> selectedValueList = new ArrayList<>();
+        Map maps  = (Map)JSON.parse(selectedValue);
+        for(int i=0;i<maps.size();i++) {
+            String tmp = maps.get(i + "")+"";
+            selectedValueList.add(tmp);
+        }
+
+        String str = JSON.toJSONString(selectedValueList);
+
+
+        task.setOrgtype(str);
+
+
+        try{
+            timerTaskService.update(task);
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+
+
+        return  null;
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
 
     //查询任务细节（更新用）
     @PostMapping("/queryTaskDetail")
@@ -208,6 +288,33 @@ public class TaskController {
 
 
 
+    //查询定时任务细节（更新用）
+    @PostMapping("/queryTimerTaskDetail")
+    public Object queryTimerTaskDetail(
+            @RequestParam(name="id",defaultValue="") String id,
+            HttpServletRequest request,
+            HttpServletResponse response,
+            Model model) throws Exception {
+
+        System.out.println("queryTimerTaskDetail 开始执行============================");
+
+        TimerTask taskTmp = new TimerTask();
+        taskTmp.setId(Integer.parseInt(id));
+
+        TimerTask queryTask = timerTaskService.query(taskTmp).get(0);
+
+
+
+        return queryTask;
+    }
+
+
+
+
+
+
+
+
 
     //删除任务
     @PostMapping("/deleteTask")
@@ -226,6 +333,32 @@ public class TaskController {
         return null;
     }
 
+
+
+
+
+
+
+
+
+
+
+    //删除定时任务
+    @PostMapping("/deleteTimerTask")
+    public Object deleteTimerTask(
+            @RequestParam(name="id",defaultValue="") String id,
+            HttpServletRequest request,
+            HttpServletResponse response,
+            Model model) throws Exception {
+
+        System.out.println("deleteTimerTask 开始执行============================");
+
+
+
+        timerTaskService.delete(id);
+
+        return null;
+    }
 
 
 
@@ -318,13 +451,7 @@ public class TaskController {
             taskService.insert(task);
 
             //数据插入后生成taskcomplete表
-            for(int i=0;i<selectedValueList.size();i++){
-                TaskComplete taskComplete = new TaskComplete();
-                taskComplete.setIscomplete(0);
-                taskComplete.setTaskid(task.getId());
-                taskComplete.setOrgid(selectedValueList.get(i));
-                taskCompleteService.insert(taskComplete);
-            }
+            taskService.createTaskComplete(task);
 
         }catch (Exception e){
             e.printStackTrace();
@@ -337,6 +464,67 @@ public class TaskController {
         return  null;
 
     }
+
+
+
+
+
+    //发布定时任务
+    @Transactional(rollbackFor = Exception.class)
+    @PostMapping("/publishTimerTask")
+    public Object publishTimerTask(
+            @RequestParam(name="fileType",defaultValue="") String fileType,
+            @RequestParam(name="taskTitle",defaultValue="") String taskTitle,
+            @RequestParam(name="taskDescribe",defaultValue="") String taskDescribe,
+            @RequestParam(name="userid",defaultValue="") String userid,
+            @RequestParam(name="selectedValue",defaultValue="") String selectedValue,
+
+
+            HttpServletRequest request,
+            HttpServletResponse response,
+            Model model) throws Exception {
+
+        System.out.println("publishTimerTask 开始执行============================");
+
+
+
+        //selectedValue得到的是map类型，需要转换为list
+        List<String> selectedValueList = new ArrayList<>();
+        Map maps  = (Map)JSON.parse(selectedValue);
+        for(int i=0;i<maps.size();i++) {
+            String tmp = maps.get(i + "")+"";
+            selectedValueList.add(tmp);
+        }
+
+        String str = JSON.toJSONString(selectedValueList);
+
+
+
+        TimerTask timerTaskTmp = new TimerTask();
+        timerTaskTmp.setFiletype(fileType);
+        timerTaskTmp.setTasktitle(taskTitle);
+        timerTaskTmp.setTaskdescribe(taskDescribe);
+        timerTaskTmp.setUserid(userid);
+        timerTaskTmp.setOrgtype(str);
+        timerTaskTmp.setIsenable(1);
+
+
+        timerTaskService.insert(timerTaskTmp);
+
+
+
+        return  null;
+
+    }
+
+
+
+
+
+
+
+
+
 
 
 
@@ -405,13 +593,13 @@ public class TaskController {
 
 
 
-
-    //用户查询自己需要完成的任务,用户查询任务是根据任务的创建时间来查询
-    @PostMapping("/queryTaskComplete")
-    public Object queryTaskComplete(
-
-            @RequestParam(name="taskStatus",defaultValue="") String taskStatus,
-
+    //管理员查询已经发布的定时任务列表
+    @PostMapping("/queryTimerTask")
+    public Object queryTimerTask(
+            @RequestParam(name="taskid",defaultValue="") String taskid,
+            @RequestParam(name="iscomplete",defaultValue="") String iscomplete,
+            @RequestParam(name="completetime",defaultValue="") String completetime,
+            @RequestParam(name="userid",defaultValue="") String userid,
             @RequestParam(name="orgid",defaultValue="") String orgid,
             @RequestParam(name="fromDate",defaultValue="") String fromDate,
             @RequestParam(name="endDate",defaultValue="") String endDate,
@@ -421,7 +609,119 @@ public class TaskController {
             HttpServletResponse response,
             Model model) throws Exception {
 
-        System.out.println("queryTaskComplete 开始执行============================");
+        System.out.println("queryTimerTask 开始执行============================");
+
+
+
+        if(fromDate.equals("")){
+            fromDate = "2000-01-01";
+        }
+
+        if(endDate.equals("")) {
+            endDate = "2099-12-12";
+        }
+
+
+
+        TimerTask task = new TimerTask();
+
+
+        try{
+            List<TimerTask> tasks = timerTaskService.query(task);
+
+            //文件类型名称需要替换
+            for(TimerTask t :tasks){
+                if(t.getFiletype().equals("1")){
+                    t.setFiletype("重庆保险中介机构季度数据表-专业代理、经纪机构用表");
+                }else if(t.getFiletype().equals("2")){
+                    t.setFiletype("重庆保险中介机构季度数据表-公估机构用表");
+                }else if(t.getFiletype().equals("3")){
+                    t.setFiletype("重庆保险中介机构季度数据表-专业中介机构销售寿险公司长期保险产品统计表");
+                }else if(t.getFiletype().equals("4")){
+                    t.setFiletype("重庆保险中介机构季度数据表-银邮代理机构用表");
+                }
+
+            }
+
+            return  tasks;
+        }catch (Exception e){
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+
+
+
+
+
+
+    //管理者某个任务下已经完成的机构
+    @PostMapping("/queryCompletedOrg")
+    public Object queryCompletedOrg(
+
+            @RequestParam(name="taskid",defaultValue="") String taskid,
+
+
+            HttpServletRequest request,
+            HttpServletResponse response,
+            Model model) throws Exception {
+
+        System.out.println("queryCompletedOrg 开始执行============================");
+
+
+
+        TaskComplete taskComplete = new TaskComplete();
+
+
+        List<Map<String, String>> resultList = new ArrayList<>();
+
+        //如果指明了id，那就是根据任务id查询完成的任务
+        taskComplete.setTaskid(Integer.parseInt(taskid));
+        taskComplete.setIscomplete(1);
+        try {
+            List<TaskComplete> taskCompletes = taskCompleteService.query(taskComplete);
+
+            //然后查询机构信息
+            for (TaskComplete taskCompleteTmp : taskCompletes) {
+                OrgInfo orgInfo = new OrgInfo();
+                orgInfo.setOrgid(taskCompleteTmp.getOrgid());
+                OrgInfo orgInfoTmp = orgInfoService.query(orgInfo).get(0);
+
+                Map<String, String> resultMap = new HashMap<>();
+                resultMap.put("orgName", orgInfoTmp.getOrgname());
+                resultMap.put("manager", orgInfoTmp.getManager());
+                resultMap.put("typeName", orgInfoTmp.getOrgTypeName());
+
+                resultList.add(resultMap);
+            }
+
+            return resultList;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+
+
+    }
+
+
+
+
+
+    //用户查询自己需要完成的任务,用户查询任务是根据任务的创建时间来查询
+    @PostMapping("/queryTaskComplete")
+    public Object queryTaskComplete(
+
+            @RequestParam(name="taskStatus",defaultValue="") String taskStatus,
+            @RequestParam(name="orgid",defaultValue="") String orgid,
+            @RequestParam(name="fromDate",defaultValue="") String fromDate,
+            @RequestParam(name="endDate",defaultValue="") String endDate,
+            HttpServletRequest request,
+            HttpServletResponse response,
+            Model model) throws Exception {
+
+            System.out.println("queryTaskComplete 开始执行============================");
 
 
 
@@ -433,44 +733,11 @@ public class TaskController {
             endDate = "2099-12-12";
         }
 
-
-
-
-
-
-//        //最后需要返回对对象
-//        List<Map<String,String>> resultMap = new ArrayList<>();
-//
-//        TaskComplete taskComplete = new TaskComplete();
-//        taskComplete.setIscomplete(Integer.parseInt(taskStatus) );
-//        taskComplete.setOrgid(orgid);
-//        //查询该机构id下已经完成的任务，在规定的时间范围了
-//        List<TaskComplete> taskCompleteList = taskCompleteService.query(taskComplete,fromDate,endDate);
-//
-//        //开始查询任务标题，任务描述，任务发布时间，开始时间，结束时间信息
-//        for(TaskComplete taskCompleteTmp : taskCompleteList){
-//            Map<String,String> resultMapTmp = new HashMap<>();
-//
-//            Task task1 = taskCompleteTmp.getTaskinfo();
-//
-//            resultMapTmp.put("tasktitle",task1.getTasktitle());
-//            resultMapTmp.put("taskdescribe",task1.getTaskdescribe());
-//            resultMapTmp.put("createtime",task1.getCreatetime());
-//            resultMapTmp.put("fromdate",task1.getFromdate());
-//            resultMapTmp.put("enddate",task1.getEnddate());
-//            resultMapTmp.put("taskcompleteid", taskCompleteTmp.getId()+"");
-//            resultMapTmp.put("iscomplete",taskStatus);
-//
-//            resultMap.add(resultMapTmp);
-//        }
-//
-//        return resultMap;
-
-
-
-
-
         TaskComplete taskComplete = new TaskComplete();
+
+
+        //查询某个机构下，某种状态的任务
+
         taskComplete.setOrgid(orgid);
         taskComplete.setIscomplete(Integer.parseInt(taskStatus) );
 
@@ -482,6 +749,7 @@ public class TaskController {
             e.printStackTrace();
             return null;
         }
+
 
     }
 
