@@ -165,52 +165,6 @@ public class QueryAndDownloadController {
 
 
 
-
-
-
-
-
-
-
-
-//        //根据orgType查询,得到机构id（orgid）
-//        OrgType orgTypeTmp = orgTypeService.findAllByOrgTpe(Integer.parseInt(orgType) ).get(0);
-//        //开始查询这些机构id下已经完成的任务
-//        for(OrgInfo orgInfo:orgTypeTmp.getOrgs()){
-//
-//            TaskComplete taskComplete = new TaskComplete();
-//            //查询任务状态为完成
-//            taskComplete.setIscomplete(2);
-//            taskComplete.setOrgid(orgInfo.getOrgid());
-//
-//            //查询该机构id下已经完成的任务，在规定的时间范围了
-//            List<TaskComplete> taskCompleteList = taskCompleteService.queryByCompleteTime(taskComplete,fromDate,endDate);
-//
-//            //开始查询任务标题，任务描述，任务发布时间，开始时间，结束时间信息
-//            //一个机构下的所有任务
-//            for(TaskComplete taskCompleteTmp : taskCompleteList){
-//
-//
-//
-//                Task task = new Task();
-//                task.setId(taskCompleteTmp.getTaskid());
-//                Task task1 = taskService.query(task).get(0);
-//
-//                //如果是要查询的任务类型就进行存储
-//                if(task1.getFiletype().equals(fileType)){
-//
-//                    allTaskComplete.add(taskCompleteTmp);
-//
-//                }
-//            }
-//        }
-//
-//
-//
-//
-//
-
-
         //如果没有任何记录
         if(allTaskComplete.size()==0){
             System.out.println("没有查询到任何数据");
@@ -470,13 +424,35 @@ public class QueryAndDownloadController {
 
             //开始查询管理机构名称,管理员姓名,填表人姓名，填表人电话
             Userinfo userinfo = userinfoService.findById(table3s.get(0).getUserid());
-            OrgInfo orgInfoTmp = new OrgInfo();
-            orgInfoTmp.setOrgid(userinfo.getOrgid());
-            OrgInfo orgInfo = orgInfoService.query(orgInfoTmp).get(0);
-            String orgName = orgInfo.getOrgname();
-            String manager = orgInfo.getManager();
-            String userName = userinfo.getUsername();
-            String tel = userinfo.getTelphone();
+
+
+
+            String orgName = "";
+            String manager = "";
+            String userName = "";
+            String tel = "";
+
+
+            //如果该用户被删除了
+            if(userinfo==null){
+
+                orgName = "未知机构名";
+                manager = "未知管理者";
+                userName = "未知用户名 "+table3s.get(0).getUserid();
+                tel = "未知电话";
+
+            }else{
+
+                OrgInfo orgInfoTmp = new OrgInfo();
+                orgInfoTmp.setOrgid(userinfo.getOrgid());
+                OrgInfo orgInfo = orgInfoService.query(orgInfoTmp).get(0);
+                 orgName = orgInfo.getOrgname();
+                 manager = orgInfo.getManager();
+                 userName = userinfo.getUsername();
+                 tel = userinfo.getTelphone();
+            }
+
+
 
 
             //查询任务标题
@@ -512,13 +488,36 @@ public class QueryAndDownloadController {
 
             //开始查询管理机构名称,管理员姓名,填表人姓名，填表人电话
             Userinfo userinfo = userinfoService.findById(table1.getUserid());
-            OrgInfo orgInfoTmp = new OrgInfo();
-            orgInfoTmp.setOrgid(userinfo.getOrgid());
-            OrgInfo orgInfo = orgInfoService.query(orgInfoTmp).get(0);
-            String orgName = orgInfo.getOrgname();
-            String manager = orgInfo.getManager();
-            String userName = userinfo.getUsername();
-            String tel = userinfo.getTelphone();
+
+
+            String orgName = "";
+            String manager = "";
+            String userName = "";
+            String tel = "";
+
+
+            //如果该用户被删除了
+            if(userinfo==null){
+
+                orgName = "未知机构名";
+                manager = "未知管理者";
+                userName = "未知用户名 "+table1.getUserid();
+                tel = "未知电话";
+
+            }else{
+
+                OrgInfo orgInfoTmp = new OrgInfo();
+                orgInfoTmp.setOrgid(userinfo.getOrgid());
+                OrgInfo orgInfo = orgInfoService.query(orgInfoTmp).get(0);
+                 orgName = orgInfo.getOrgname();
+                 manager = orgInfo.getManager();
+                 userName = userinfo.getUsername();
+                     tel = userinfo.getTelphone();
+            }
+
+
+
+
 
 
             //查询任务标题

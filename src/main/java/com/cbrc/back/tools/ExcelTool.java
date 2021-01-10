@@ -360,6 +360,16 @@ public class ExcelTool {
             String outPath ="";
             String downloadPath="";
 
+
+            //判断文件输出路径是否存在，如果不存在就创建
+            File file =new File(System.getProperty("user.dir")+File.separator+"src"+File.separator+"main"+File.separator+"resources"+File.separator+"static"+File.separator+"download"+File.separator);
+            if  (!file .exists()  && !file .isDirectory())
+            {
+                System.out.println("//不存在");
+                file .mkdir();
+            }
+
+
             if(isCollect){
 
                 //String fullPath = System.getProperty("user.dir")+File.separator+"classes"+File.separator+"static"+File.separator+"template"+File.separator+fileName;

@@ -45,7 +45,7 @@ public class TaskController {
 
 
 
-    //更新任务，如果选择对机构发送了改变，需要对taskcomplete表进行响应的调整
+    //更新任务，如果选择对机构发生了改变，需要对taskcomplete表进行响应的调整
     @PostMapping("/update")
     public Object update(
             @RequestParam(name="id",defaultValue="") String id,
@@ -327,7 +327,7 @@ public class TaskController {
         System.out.println("deleteTask 开始执行============================");
 
 
-
+        //删除任务同时会删除taskcomplete和table1、3的数据
         taskService.delete(id);
 
         return null;
@@ -669,6 +669,9 @@ public class TaskController {
 
         System.out.println("queryCompletedOrg 开始执行============================");
 
+        Task task = new Task();
+        task.setId(Integer.parseInt(taskid));
+        String filetype = taskService.query(task).get(0).getFiletype();
 
 
         TaskComplete taskComplete = new TaskComplete();
@@ -692,7 +695,8 @@ public class TaskController {
                 resultMap.put("orgName", orgInfoTmp.getOrgname());
                 resultMap.put("manager", orgInfoTmp.getManager());
                 resultMap.put("typeName", orgInfoTmp.getOrgTypeName());
-
+                resultMap.put("taskcompleteid", taskCompleteTmp.getId()+"");
+                resultMap.put("fileType", filetype);
                 resultList.add(resultMap);
             }
 

@@ -21,6 +21,12 @@
 
 
 
+<!--会把该机构下的所有子公司都查询(未完成)-->
+    <select id="findAll"   resultType="java.util.Map">
+       select * from  orginfo,dic_orgtype where orginfo.orgtype=dic_orgtype.orgtype
+    </select>
+
+
 
 
     <update id="update"  parameterType="com.cbrc.back.model.OrgType">

@@ -357,8 +357,8 @@ public class UploadController {
 
             try{
 
+                //在table1中插入任务，同时设置taskcomplete的完成状态
                 table1Service.insert(table1,userid,taskCompleteId);
-
 
             }catch (Exception e){
                 e.printStackTrace();

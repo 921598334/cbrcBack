@@ -44,7 +44,7 @@ public class LoginController {
 
         if(userinfo == null){
             Map<String,String> error = new HashMap<>();
-            error.put("F","用户名不存在");
+            error.put("F","用户名不存在或者密码错误");
             return error;
         }else{
             System.out.println("成功查询到用户============================");

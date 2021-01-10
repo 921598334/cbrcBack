@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class OrgTypeService {
@@ -22,7 +23,7 @@ public class OrgTypeService {
     OrgTypeMapper orgTypeMapper;
 
 
-    //查询所有机构类型，机构信息
+    //查询所有机构类型，机构信息（需要优化）
     public List<OrgType> findAll() {
 
         //得到所有的机构类型

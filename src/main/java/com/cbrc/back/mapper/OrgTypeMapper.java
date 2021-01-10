@@ -11,12 +11,13 @@ import org.apache.ibatis.annotations.Select;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 //机构类型
 @Mapper
 public interface OrgTypeMapper {
 
-
+    List<Map<String,String>> findAll();
 
     List<OrgType> query(OrgType orgType);
 
