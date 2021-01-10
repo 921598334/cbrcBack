@@ -55,4 +55,10 @@
     </delete>
 
 
+
+    <delete id="deleteByUserId"  parameterType="java.lang.Integer">
+        delete from table3 where userid=#{userid}
+    </delete>
+
+
 </mapper>

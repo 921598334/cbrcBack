@@ -1,10 +1,11 @@
 package com.cbrc.back.service;
 
 
+import com.alibaba.fastjson.JSON;
 import com.cbrc.back.mapper.OrgInfoMapper;
 import com.cbrc.back.mapper.OrgTypeMapper;
-import com.cbrc.back.model.OrgInfo;
-import com.cbrc.back.model.OrgType;
+import com.cbrc.back.model.*;
+import org.apache.poi.ss.formula.functions.T;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +20,14 @@ public class OrgInfoService {
     @Autowired
     OrgTypeMapper orgTypeMapper;
 
+    @Autowired
+    TaskCompleteService taskCompleteService;
+
+    @Autowired
+    UserinfoService userinfoService;
+
+    @Autowired
+    TaskService taskService;
 
     public List<OrgInfo> query(OrgInfo orgInfo) {
 
@@ -64,7 +73,41 @@ public class OrgInfoService {
         orgInfoMapper.update(orgInfo);
     }
 
+
+    //删除公司同时会删除公司下的用户
     public void delete(OrgInfo orgInfo){
+
+        Userinfo userinfoTmp = new Userinfo();
+        userinfoTmp.setOrgid(orgInfo.getOrgid());
+        List<Userinfo> userinfoList = userinfoService.query(userinfoTmp);
+
+        //查询该公司下的所有用户
+        for(Userinfo u:userinfoList){
+            //该操作除了删除用户外还会删除用户完成过的taskcomplete，table1，table3
+            userinfoService.delete(u);
+        }
+
+        //把taskcomplete中的数据也删除
+        TaskComplete taskCompleteTmp = new TaskComplete();
+        taskCompleteTmp.setOrgid(orgInfo.getOrgid());
+        taskCompleteService.delete(taskCompleteTmp);
+
+
+        //task中的orgtpe需要跟着删除
+        Task taskTmp = new Task();
+        taskTmp.setOrgtype("%\""+orgInfo.getOrgid()+"\"%");
+        List<Task> tasks = taskService.query(taskTmp);
+
+        //删除orgid
+        for(Task t:tasks){
+            List<String> orgTypes = JSON.parseArray( t.getOrgtype(),String.class);
+            orgTypes.remove(orgInfo.getOrgid());
+            String orgStr = JSON.toJSONString(orgTypes);
+            t.setOrgtype(orgStr);
+            taskService.update(t);
+        }
+
+
         orgInfoMapper.delete(orgInfo);
     }
 

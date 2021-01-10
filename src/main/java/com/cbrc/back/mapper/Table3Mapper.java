@@ -27,6 +27,9 @@ public interface Table3Mapper {
 
     void deleteByTaskCompleteId(String taskcompleteid);
 
+
+
+    void deleteByUserId(Integer userid);
 }
 
 

@@ -193,6 +193,7 @@ public class AdminSettingController {
             HttpServletResponse response
     ){
 
+        //删除机构时会删除该机构下的所有公司和用户
         orgTypeService.delete(id);
         return null;
     }

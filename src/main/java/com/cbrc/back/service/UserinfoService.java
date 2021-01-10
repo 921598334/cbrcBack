@@ -1,7 +1,10 @@
 package com.cbrc.back.service;
 
 
+import com.cbrc.back.mapper.Table1Mapper;
+import com.cbrc.back.mapper.Table3Mapper;
 import com.cbrc.back.mapper.UserinfoMapper;
+import com.cbrc.back.model.TaskComplete;
 import com.cbrc.back.model.Userinfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,6 +17,14 @@ public class UserinfoService {
     @Autowired
     UserinfoMapper userinfoMapper;
 
+    @Autowired
+    Table1Mapper table1Mapper;
+
+    @Autowired
+    Table3Mapper table3Mapper;
+
+    @Autowired
+    TaskCompleteService taskCompleteService;
 
 
     //登陆时判断用户的用户名和密码时候相同
@@ -72,8 +83,30 @@ public class UserinfoService {
     }
 
 
-
+    //删除用户同时还需要删除该用户完成过的任务,把taskcomplete的状态设置为1
     public void delete(Userinfo userinfo){
+
+
+        table1Mapper.deleteByUserId(userinfo.getUserid());
+        table3Mapper.deleteByUserId(userinfo.getUserid());
+
+
+        TaskComplete taskCompleteTmp = new TaskComplete();
+        //根据userid查询记录
+        taskCompleteTmp.setUserid(userinfo.getUserid());
+        List<TaskComplete> taskCompletes = taskCompleteService.query(taskCompleteTmp);
+
+        for(TaskComplete t: taskCompletes){
+            t.setIscomplete(0);
+            t.setCompletetime("");
+            t.setUserid(0);
+            taskCompleteService.update(t);
+
+        }
+
+
+
+        //用户完成过的任务记录都删除后，最后删除用户
         userinfoMapper.delete(userinfo);
     }
 
