@@ -156,21 +156,34 @@ public class UserSettingController {
         List<Userinfo> userinfoList = userinfoService.query(userinfoTmp);
 
 
+        int deleteIndex = -1;
         //查询用户所属机构的中文名称
-        for(Userinfo userinfo:userinfoList){
-            //定时作业直接跳过
+        for(int i=0;i<userinfoList.size();i++){
+            //超级用户（orgid=10-x）直接跳过
+            if(userinfoList.get(i).getOrgid().equals("10-x")){
+               // userinfoList.remove(i);
+                deleteIndex = i;
+                continue;
+            }
 
             OrgInfo orgInfoTmp = new OrgInfo();
-            orgInfoTmp.setOrgid(userinfo.getOrgid());
+            orgInfoTmp.setOrgid(userinfoList.get(i).getOrgid());
 
             List<OrgInfo> queryResult = orgInfoService.query(orgInfoTmp);
             if(queryResult==null || queryResult.size()==0){
-                userinfo.setOrgName("未知机构："+userinfo.getOrgid());
+                userinfoList.get(i).setOrgName("未知机构："+userinfoList.get(i).getOrgid());
             }else{
-                userinfo.setOrgName(queryResult.get(0).getOrgname());
+                userinfoList.get(i).setOrgName(queryResult.get(0).getOrgname());
             }
-
         }
+
+        //删除超级管理员
+        if(deleteIndex!=-1){
+            userinfoList.remove(deleteIndex);
+        }
+
+
+
 
 
         List<OrgInfo> orgInfoList = orgInfoService.query(new OrgInfo());

@@ -225,6 +225,8 @@ public class QueryAndDownloadController {
     //需要显示机构名称，任务标题，
     @PostMapping("/query")
     public Object query(
+
+                        @RequestParam(name="ortNameee",defaultValue="") String orgNameee,
                          @RequestParam(name="orgType",defaultValue="") String orgType,
                          @RequestParam(name="fromDate",defaultValue="") String fromDate,
                          @RequestParam(name="endDate",defaultValue="") String endDate,
@@ -264,7 +266,7 @@ public class QueryAndDownloadController {
 
 
         //根据orgType查询,得到机构id（orgid）
-        OrgType orgTypeTmp = orgTypeService.findAllByOrgTpe(Integer.parseInt(orgType) ).get(0);
+        OrgType orgTypeTmp = orgTypeService.findAllByOrgTpeAndOrgName(Integer.parseInt(orgType),orgNameee ).get(0);
         //开始查询这些机构id下已经完成的任务
         for(OrgInfo orgInfo:orgTypeTmp.getOrgs()){
 

@@ -52,13 +52,13 @@ public class SaticScheduleTask {
     //@Scheduled(cron = "0 59 23 L 3,6,9,12 ?")
 
     //每季度第一天，1点发布任务
-    //@Scheduled(cron = "0 00 1 1 4,7,10,1 ?")
+    @Scheduled(cron = "0 00 1 1 4,7,10,1 ?")
 
 
     //每天的0点、13点、18点、21点都执行一次
-    @Scheduled(cron = "0 0 0,13,18,21 * * ?")
+    //@Scheduled(cron = "0 0 0,13,18,21 * * ?")
     //或直接指定时间间隔，例如：5秒
-    //@Scheduled(fixedRate=50000)
+    //@Scheduled(fixedRate=5000)
     private void configureTasks() {
         System.err.println("定时任务开始执行，当前时间为: " + LocalDateTime.now());
 
@@ -90,7 +90,7 @@ public class SaticScheduleTask {
                 }else if(periodTmp[1].equals("10")){
                     period = periodTmp[0]+"年第4季度";
                 }
-                taskTmp.setPeriod(period.substring(1));
+                taskTmp.setPeriod(period);
 
                 taskTmp.setOrgtype(timerTask.getOrgtype());
 

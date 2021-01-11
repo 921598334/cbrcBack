@@ -1,0 +1,12 @@
+部署注意事项
+
+1.前端upload.js的upload方法开启输入验证
+2.前端修改ip
+
+前端打包后要放到后端的template下，修改index.html文件的静态文件路径
+
+3.后端修改properties文件
+4.后端修改ExcelTool文件的globalDownloadIp
+5.后端打包后，在跟路径下上传模版"src"+File.separator+"main"+File.separator+"resources"+File.separator+"static"+File.separator+"template"
+
+6.注意定时任务的时间是否需要修改

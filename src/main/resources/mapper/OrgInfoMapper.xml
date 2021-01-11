@@ -13,7 +13,7 @@
         <trim prefix="WHERE" prefixOverrides="AND |OR">
 
             <if test="orgid != null "> AND orgid=#{orgid}</if>
-            <if test="orgname != null "> AND orgname=#{orgname}</if>
+            <if test="orgname != null "> AND orgname LIKE #{orgname}</if>
             <if test="orgtype != null "> AND orgtype=#{orgtype}</if>
             <if test="pushtype != null "> AND pushtype=#{pushtype}</if>
         </trim>

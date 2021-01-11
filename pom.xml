@@ -16,8 +16,9 @@
 
     <properties>
         <java.version>1.8</java.version>
-        <!--<skipTests>true</skipTests>-->
+        <skipTests>true</skipTests>
     </properties>
+
 
 
 
@@ -93,7 +94,6 @@
             <artifactId>poi-ooxml</artifactId>
             <version>3.17</version>
         </dependency>
-
 
 
 

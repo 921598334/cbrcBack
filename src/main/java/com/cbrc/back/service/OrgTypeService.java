@@ -49,8 +49,8 @@ public class OrgTypeService {
 
 
 
-    //查询某个机构类型下的所有机构信息
-    public List<OrgType> findAllByOrgTpe(Integer orgTypeId) {
+    //查询某个机构类型下的所有机构信息,如果设置了orgNamee，那么只查询该该机构下有orgNamee的数据
+    public List<OrgType> findAllByOrgTpeAndOrgName(Integer orgTypeId,String orgNamee) {
 
         //得到所有的机构类型
         OrgType orgTypeTmp = new OrgType();
@@ -61,6 +61,7 @@ public class OrgTypeService {
         for(OrgType orgType : orgTypeList){
             OrgInfo orgInfo = new OrgInfo();
             orgInfo.setOrgtype( orgType.getOrgtype()+"");
+            orgInfo.setOrgname("%"+orgNamee+"%");
             List<OrgInfo> orgInfoList = orgInfoService.query(orgInfo);
 
             orgType.setOrgs(orgInfoList);
