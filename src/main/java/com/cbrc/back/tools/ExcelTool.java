@@ -22,9 +22,12 @@ public class ExcelTool {
     @Autowired
     TableStructMapper tableStructMapper;
 
-
+    //告诉前端从那个地址下载文件
     //String globalDownloadIp="122.114.178.53:8080";
     String globalDownloadIp="127.0.0.1:8080";
+    //String globalDownloadIp="10.120.250.10:8080";
+
+
 
     //templateId:模版索引
     //value:需要填充的直，其按照key，value存储，
