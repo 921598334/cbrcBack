@@ -123,6 +123,17 @@ public class Table1Service {
         return table1Mapper.collectFind(taskCompleteListId);
     }
 
+    public Table1 collectFindRound(List<String> taskCompleteListId){
+        return table1Mapper.collectFindRound(taskCompleteListId);
+    }
+
+
+
+
+
+    public List<Table1> collectFind1(List<String> taskCompleteListId){
+        return table1Mapper.collectFind1(taskCompleteListId);
+    }
 
 
 

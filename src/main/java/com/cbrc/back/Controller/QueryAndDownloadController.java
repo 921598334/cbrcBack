@@ -598,7 +598,11 @@ public class QueryAndDownloadController {
             return  filePath;
         }else{
 
-            Table1 table1Result = table1Service.collectFind(allTaskCompleteId);
+            Table1 table1Result = table1Service.collectFindRound(allTaskCompleteId);
+
+            //List<Table1> table1Result = table1Service.collectFind1(allTaskCompleteId);
+
+
 
 
             //如果没查询到记录
@@ -613,6 +617,9 @@ public class QueryAndDownloadController {
             String filePath = downloadService.downloadExcel1(table1Result,true,fileType,null,orgName,period,null,null);
 
             return  filePath;
+
+
+            //return  null;
         }
 
     }

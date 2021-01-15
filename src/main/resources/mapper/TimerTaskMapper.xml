@@ -24,9 +24,9 @@
 
 
     <insert id="insert"  parameterType="com.cbrc.back.model.TimerTask">
-        insert into timertask(tasktitle,taskdescribe,filetype,orgtype,userid,isenable )
+        insert into timertask(tasktitle,taskdescribe,filetype,orgtype,userid,isenable,cron )
          values
-           (#{tasktitle},#{taskdescribe},#{filetype},#{orgtype},#{userid},#{isenable})
+           (#{tasktitle},#{taskdescribe},#{filetype},#{orgtype},#{userid},#{isenable},#{cron})
     </insert>
 
 
@@ -59,6 +59,10 @@
             <if test="isenable != null ">
                 isenable=#{isenable},
             </if>
+            <if test="cron != null ">
+                cron=#{cron},
+            </if>
+
 
 
 

@@ -6,8 +6,9 @@ import com.cbrc.back.model.*;
 import com.cbrc.back.model.TimerTask;
 import com.cbrc.back.service.*;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.poi.ss.formula.functions.T;
+import org.quartz.CronExpression;
 import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -40,8 +41,6 @@ public class TaskController {
     OrgInfoService orgInfoService;
 
     SimpleDateFormat dateformat = new SimpleDateFormat("yyyy-MM-dd");
-
-
 
 
 
@@ -184,6 +183,7 @@ public class TaskController {
             @RequestParam(name="userid",defaultValue="") String userid,
             @RequestParam(name="period",defaultValue="") String period,
             @RequestParam(name="isenable",defaultValue="") String isenable,
+            @RequestParam(name="cron",defaultValue="") String cron,
 
 
             HttpServletRequest request,
@@ -200,7 +200,22 @@ public class TaskController {
         task.setFiletype(fileType);
         task.setTasktitle(taskTitle);
         task.setTaskdescribe(taskDescribe);
-        if(isenable.equals("true")){
+
+
+        //验证cron的有效性
+        boolean isVaild = CronExpression.isValidExpression(cron);
+
+        if(!isVaild){
+            Map<String,String> error = new HashMap<>();
+            error.put("F","Cron非法，请检查");
+            return error;
+        }
+
+
+        task.setCron(cron);
+
+
+        if(isenable.equals("true") || isenable.equals("1")){
             task.setIsenable(1);
         }else{
             task.setIsenable(0);
@@ -478,6 +493,7 @@ public class TaskController {
             @RequestParam(name="taskDescribe",defaultValue="") String taskDescribe,
             @RequestParam(name="userid",defaultValue="") String userid,
             @RequestParam(name="selectedValue",defaultValue="") String selectedValue,
+            @RequestParam(name="cron",defaultValue="") String cron,
 
 
             HttpServletRequest request,
@@ -507,6 +523,19 @@ public class TaskController {
         timerTaskTmp.setUserid(userid);
         timerTaskTmp.setOrgtype(str);
         timerTaskTmp.setIsenable(1);
+        //验证cron的有效性
+        boolean isVaild = CronExpression.isValidExpression(cron);
+
+        if(!isVaild){
+            Map<String,String> error = new HashMap<>();
+            error.put("F","Cron非法，请检查");
+            return error;
+        }
+
+
+        timerTaskTmp.setCron(cron);
+
+
 
 
         timerTaskService.insert(timerTaskTmp);

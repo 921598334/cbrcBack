@@ -99,7 +99,6 @@ public class SaticScheduleTask {
                     taskService.insert(taskTmp);
                     //数据插入后生成taskcomplete表
                     taskService.createTaskComplete(taskTmp);
-
                 }catch (Exception e){
                     e.printStackTrace();
                     throw  e;

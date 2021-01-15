@@ -22,6 +22,11 @@ public interface Table1Mapper {
     List<Table1> query(Table1 table1);
 
     Table1 collectFind(List<String> taskCompleteListId);
+    Table1 collectFindRound(List<String> taskCompleteListId);
+
+
+
+    List<Table1> collectFind1(List<String> taskCompleteListId);
 
 
     void deleteByTaskCompleteId(String taskcompleteid);

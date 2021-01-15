@@ -16,7 +16,7 @@ public class TimerTask {
     private String userid;
     private String filetype;
     private Integer isenable;
-
+    private String cron;
 
 
 
