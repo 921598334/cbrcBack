@@ -24,8 +24,8 @@ public class ExcelTool {
 
     //告诉前端从那个地址下载文件
     //String globalDownloadIp="122.114.178.53:8080";
-    String globalDownloadIp="127.0.0.1:8080";
-    //String globalDownloadIp="10.120.250.10:8080";
+    //String globalDownloadIp="127.0.0.1:8080";
+    //String globalDownloadIp="192.168.120.10:8080";
 
 
 
@@ -33,6 +33,10 @@ public class ExcelTool {
     //value:需要填充的直，其按照key，value存储，
     public String writeExcelPOI1(Table1 table1,boolean isCollect,String fileType,String manager,String orgName,String period,String user,String tel) {
         try {
+
+
+
+
 
 
 
@@ -373,14 +377,14 @@ public class ExcelTool {
                 //String fullPath = System.getProperty("user.dir")+File.separator+"classes"+File.separator+"static"+File.separator+"template"+File.separator+fileName;
                 outPath = System.getProperty("user.dir")+File.separator+"src"+File.separator+"main"+File.separator+"resources"+File.separator+"static"+File.separator+"download"+File.separator+"汇总表—"+orgName+"-"+period+"-"+fileName+"-"+ System.currentTimeMillis()+".xls";
                 //前端使用该路径下载
-                downloadPath = globalDownloadIp+File.separator+"download"+File.separator+"汇总表—"+orgName+"-"+period+"-"+fileName+"-"+System.currentTimeMillis()+".xls";
+                downloadPath = "download"+File.separator+"汇总表—"+orgName+"-"+period+"-"+fileName+"-"+System.currentTimeMillis()+".xls";
 
 
             }else{
                 //生成excel放入该路径下
                 outPath = System.getProperty("user.dir")+File.separator+"src"+File.separator+"main"+File.separator+"resources"+File.separator+"static"+File.separator+"download"+File.separator+orgName+"-"+period+"-"+fileName+"-"+ System.currentTimeMillis()+".xls";
                 //前端使用该路径下载
-                downloadPath = globalDownloadIp+"/download/"+orgName+"-"+period+"-"+fileName+"-"+System.currentTimeMillis()+".xls";
+                downloadPath = "download/"+orgName+"-"+period+"-"+fileName+"-"+System.currentTimeMillis()+".xls";
 
             }
 
@@ -584,7 +588,7 @@ public class ExcelTool {
 
                 outPath = System.getProperty("user.dir")+File.separator+"src"+File.separator+"main"+File.separator+"resources"+File.separator+"static"+File.separator+"download"+File.separator+"汇总表—"+orgName+"-"+period+"-"+fileName+"-"+ System.currentTimeMillis()+".xls";
                 //前端使用该路径下载
-                downloadPath = globalDownloadIp+File.separator+"download"+File.separator+"汇总表—"+orgName+"-"+period+"-"+fileName+"-"+System.currentTimeMillis()+".xls";
+                downloadPath =  "download"+File.separator+"汇总表—"+orgName+"-"+period+"-"+fileName+"-"+System.currentTimeMillis()+".xls";
 
 
             }else {
@@ -593,7 +597,7 @@ public class ExcelTool {
 
                 outPath = System.getProperty("user.dir")+File.separator+"src"+File.separator+"main"+File.separator+"resources"+File.separator+"static"+File.separator+"download"+File.separator+orgName+"-"+period+"-"+fileName+"-"+ System.currentTimeMillis()+".xls";
                 //前端使用该路径下载
-                downloadPath = globalDownloadIp+"/download/"+orgName+"-"+period+"-"+fileName+"-"+System.currentTimeMillis()+".xls";
+                downloadPath =  "download/"+orgName+"-"+period+"-"+fileName+"-"+System.currentTimeMillis()+".xls";
 
             }
 

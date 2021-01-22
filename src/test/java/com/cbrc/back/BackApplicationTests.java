@@ -8,6 +8,7 @@ import com.cbrc.back.service.TaskService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import sun.net.www.http.HttpClient;
 
 import java.lang.reflect.Field;
 import java.net.InetAddress;
@@ -56,10 +57,6 @@ class BackApplicationTests {
     @Test
     void testMapper() {
 
-
-        String fullPath = System.getProperty("user.dir");
-
-        System.out.println(fullPath);
 
 
     }

@@ -28,9 +28,6 @@ import java.util.Map;
 public class IndexController {
 
 
-
-
-
     //删除任务
     @GetMapping("/")
     public String index(
@@ -42,19 +39,24 @@ public class IndexController {
         System.out.println("index 开始执行============================");
 
 
-
         return "index";
     }
 
 
 
+    //测试
+    @GetMapping("/test")
+    public String test(
+
+            HttpServletRequest request,
+            HttpServletResponse response,
+            Model model) throws Exception {
+
+        System.out.println("test 开始执行============================");
 
 
-
-
-
-
-
+        return "test";
+    }
 
 
 
